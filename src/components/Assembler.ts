@@ -1,7 +1,7 @@
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import { CPUInstructionProps } from "./instruction/interface";
+import { CPUInstructionProps } from "../instruction/interface";
 
 export default class Assembler {
   static instructionsLabelOperands: Map<any, any> = new Map()

@@ -4,13 +4,15 @@ import Simulation from "./Simulation";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import CPUInstructions from "./instruction";
+import { CPUInstructionProps } from "../instruction/interface";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
   static loadedProgramText: string = ''
   static itemHeight: number = 14;
   static lines: string[]
+
+  static instructions: Record<string, CPUInstructionProps>
 
   static initUI(programs: Record<string, string> = {}) {
     const programSelectorEl = UI.$Select('#programSelector');
@@ -31,6 +33,10 @@ export default class SimulatorUI {
 
   static getCanvas() {
     return UI.$Canvas('#canvas');
+  }
+
+  static init(instructions: Record<string, CPUInstructionProps>) {
+    this.instructions = instructions
   }
 
   static initScreen(width: number, height: number, pixelScale: number) {
@@ -166,7 +172,7 @@ export default class SimulatorUI {
       const instruction = CPU.opcodesToInstructions.get(Memory.ram[i]);
       lines.push(`${padRight(i, 4)}: ${padRight(Memory.ram[i], 8)} ${instruction || ''}`);
       if (instruction) {
-        const operands = CPUInstructions[instruction].operands;
+        const operands = this.instructions[instruction].operands;
         for (let j = 0; j < operands.length; j++) {
           lines.push(`${padRight(i + 1 + j, 4)}: ${padRight(Memory.ram[i + 1 + j], 8)}   ${operands[j][0]} (${operands[j][1]})`);
         }

@@ -1,4 +1,4 @@
-import CPU from "../CPU";
+import CPU from "../components/CPU";
 import { CPUInstructionProps } from "./interface";
 
 const data: CPUInstructionProps = {
