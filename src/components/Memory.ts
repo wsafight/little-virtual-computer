@@ -1,7 +1,7 @@
 import {TOTAL_MEMORY_SIZE} from './MemoryPosition'
 
 export default class Memory {
-  static ram: number[] = []
+  static ram: (number | string)[] = []
 
   static set(address: number, value: number) {
     if (isNaN(value)) {
