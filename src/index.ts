@@ -16,7 +16,7 @@ export default function start(programs: Record<string, string>) {
   Display.init();
   Input.init();
   Audio.init();
-  Assembler.init();
+  Assembler.init(CPUInstructions);
   SimulatorUI.initScreen(Display.SCREEN_WIDTH, Display.SCREEN_HEIGHT, Display.SCREEN_PIXEL_SCALE);
   SimulatorUI.initUI(programs);
   Simulation.loadProgramAndReset();

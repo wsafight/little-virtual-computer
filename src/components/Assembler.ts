@@ -1,14 +1,15 @@
-import CPUInstructions from "./instruction";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
+import { CPUInstructionProps } from "./instruction/interface";
 
 export default class Assembler {
-  static instructionsLabelOperands: Map<any, any> =  new Map()
+  static instructionsLabelOperands: Map<any, any> = new Map()
+  static instructions: Record<string, CPUInstructionProps> = {}
 
   static initInstructionsLabelOperands() {
-    Object.keys(CPUInstructions).forEach(name => {
-      const labelOperandIndex = CPUInstructions[name].operands.findIndex((operand: string[]) =>
+    Object.keys(this.instructions).forEach(name => {
+      const labelOperandIndex = this.instructions[name].operands.findIndex((operand: string[]) =>
         operand[1] === 'label'
       );
       if (labelOperandIndex > -1) {
@@ -76,12 +77,12 @@ export default class Assembler {
           instruction.name !== 'data' &&
           instruction.name !== 'define'
         ) {
-          const expectedOperands = CPUInstructions[instruction.name].operands;
+          const expectedOperands = this.instructions[instruction.name].operands;
           if (instruction.operands.length !== expectedOperands.length) {
             const error = new Error(
               `Wrong number of operands for instruction ${instruction.name}
   got ${instruction.operands.length}, expected ${expectedOperands.length}
-  at line ${i+1}: '${line}'`
+  at line ${i + 1}: '${line}'`
             );
             (error as any).isException = true;
             throw error;
@@ -96,7 +97,7 @@ export default class Assembler {
     } catch (err) {
       if (err.isException) throw err; // validation error
       // otherwise it must be a parsing/syntax error
-      throw new Error(`Syntax error on program line ${i+1}: '${line}'`);
+      throw new Error(`Syntax error on program line ${i + 1}: '${line}'`);
     }
     programInstructions.push({name: 'halt', operands: []});
     return programInstructions;
@@ -180,7 +181,8 @@ export default class Assembler {
     }
   }
 
-  static init() {
+  static init(instructions: Record<string, CPUInstructionProps>) {
+    this.instructions = instructions
     this.initInstructionsLabelOperands();
   }
 }
