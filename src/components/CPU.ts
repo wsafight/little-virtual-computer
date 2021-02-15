@@ -1,7 +1,7 @@
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
 import Input from "./Input";
-import { CPUInstructionProps } from "../instruction/interface";
+import { CPUInstructions } from "../interface";
 
 export default class CPU {
   static programCounter = MemoryPosition.PROGRAM_MEMORY_START
@@ -11,10 +11,10 @@ export default class CPU {
   static instructionsToOpcodes = new Map()
   static opcodesToInstructions = new Map()
 
-  static instructions : Record<string, CPUInstructionProps>
+  static instructions : CPUInstructions
 
 
-  static init(instructions: Record<string, CPUInstructionProps>) {
+  static init(instructions: CPUInstructions) {
     this.instructions = instructions
     Object.keys(instructions).forEach((instructionName: string) => {
       const opcode = instructions[instructionName].opcode;

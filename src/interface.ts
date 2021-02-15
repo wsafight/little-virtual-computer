@@ -1,3 +1,3 @@
 import { CPUInstructionProps } from "./instruction/interface";
 
-export type CPUInstruction = Record<string, CPUInstructionProps>
+export type CPUInstructions = Record<string, CPUInstructionProps>

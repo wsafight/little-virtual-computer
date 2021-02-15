@@ -4,7 +4,7 @@ import Simulation from "./Simulation";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import { CPUInstructionProps } from "../instruction/interface";
+import { CPUInstructions } from "../interface";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
@@ -12,7 +12,7 @@ export default class SimulatorUI {
   static itemHeight: number = 14;
   static lines: string[]
 
-  static instructions: Record<string, CPUInstructionProps>
+  static instructions: CPUInstructions
 
   static initUI(programs: Record<string, string> = {}) {
     const programSelectorEl = UI.$Select('#programSelector');
@@ -35,7 +35,7 @@ export default class SimulatorUI {
     return UI.$Canvas('#canvas');
   }
 
-  static init(instructions: Record<string, CPUInstructionProps>) {
+  static init(instructions: CPUInstructions) {
     this.instructions = instructions
   }
 

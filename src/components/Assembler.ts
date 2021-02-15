@@ -1,11 +1,11 @@
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import { CPUInstructionProps } from "../instruction/interface";
+import { CPUInstructions } from "../interface";
 
 export default class Assembler {
   static instructionsLabelOperands: Map<any, any> = new Map()
-  static instructions: Record<string, CPUInstructionProps> = {}
+  static instructions: CPUInstructions = {}
 
   static initInstructionsLabelOperands() {
     Object.keys(this.instructions).forEach(name => {
@@ -181,7 +181,7 @@ export default class Assembler {
     }
   }
 
-  static init(instructions: Record<string, CPUInstructionProps>) {
+  static init(instructions: CPUInstructions) {
     this.instructions = instructions
     this.initInstructionsLabelOperands();
   }
