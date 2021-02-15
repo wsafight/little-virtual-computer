@@ -1,6 +1,7 @@
 import Display from "./Display";
 import Memory from "./Memory";
 import MemoryPosition from "./MemoryPosition";
+import SimulatorUI from "./SimulatorUI";
 
 export default class Input {
   static keysPressed: Set<string> = new Set()
@@ -26,12 +27,12 @@ export default class Input {
       this.mouseDown = false;
     };
 
-    // const screenPageY = SimulatorUI.getCanvas().getBoundingClientRect().top + window.scrollY;
-    // const screenPageX = SimulatorUI.getCanvas().getBoundingClientRect().left + window.scrollX;
-    // SimulatorUI.getCanvas().onmousemove = (event:) => {
-    //   this.mouseX = Math.floor((event.pageX - screenPageX) / Display.SCREEN_PIXEL_SCALE);
-    //   this.mouseY = Math.floor((event.pageY - screenPageY) / Display.SCREEN_PIXEL_SCALE);
-    // };
+    const screenPageY = SimulatorUI.getCanvas().getBoundingClientRect().top + window.scrollY;
+    const screenPageX = SimulatorUI.getCanvas().getBoundingClientRect().left + window.scrollX;
+    SimulatorUI.getCanvas().onmousemove = (event) => {
+      this.mouseX = Math.floor((event.pageX - screenPageX) / Display.SCREEN_PIXEL_SCALE);
+      this.mouseY = Math.floor((event.pageY - screenPageY) / Display.SCREEN_PIXEL_SCALE);
+    };
   }
 
   static updateInputs() {

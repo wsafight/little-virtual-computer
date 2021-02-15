@@ -4,6 +4,7 @@ import Display from "./Display";
 import Memory from "./Memory";
 import { TOTAL_MEMORY_SIZE } from "./MemoryPosition";
 import Assembler from "./Assembler";
+import SimulatorUI from "./SimulatorUI";
 
 export default class Simulation {
   static CYCLES_PER_YIELD: number = 997
@@ -24,8 +25,7 @@ export default class Simulation {
       // run only one execution before yielding to the JS event loop so screen
       // and UI changes can be shown, and new mouse and keyboard input taken
       CPU.step();
-      // TODO
-      // SimulatorUI.updateUI();
+      SimulatorUI.updateUI();
     }
     Simulation.updateOutputs();
     if (CPU.running) {
@@ -35,17 +35,15 @@ export default class Simulation {
 
   static run() {
     CPU.running = true;
-    // TODO
-    // SimulatorUI.updateUI();
-    // SimulatorUI.updateSpeedUI();
+    SimulatorUI.updateUI();
+    SimulatorUI.updateSpeedUI();
     this.loop();
   }
 
   static stop() {
     CPU.running = false;
-    // TODO
-    // SimulatorUI.updateUI();
-    // SimulatorUI.updateSpeedUI();
+    SimulatorUI.updateUI();
+    SimulatorUI.updateSpeedUI();
   }
 
   static updateOutputs() {

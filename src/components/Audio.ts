@@ -16,7 +16,6 @@ export default class Audio {
 
   static audioChannels: any[] = []
 
-
   static audioCtx = new FixedAudioContext()
 
   static addAudioChannel(wavetypeAddr: number, freqAddr: number, volAddr: number) {
