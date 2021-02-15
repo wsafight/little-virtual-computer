@@ -4,7 +4,7 @@ import Simulation from "./Simulation";
 import CPU from "./CPU";
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
-import CPUInstructions from "./CPUInstructions";
+import CPUInstructions from "./instruction";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'

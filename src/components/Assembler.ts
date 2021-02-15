@@ -1,4 +1,4 @@
-import CPUInstructions from "./CPUInstructions";
+import CPUInstructions from "./instruction";
 import CPU from "./CPU";
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";

@@ -1,6 +1,6 @@
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
-import CPUInstructions from "./CPUInstructions";
+import CPUInstructions from "./instruction";
 import Input from "./Input";
 
 export default class CPU {
