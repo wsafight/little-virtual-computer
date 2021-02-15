@@ -7,6 +7,7 @@ import SimulatorUI from "./components/SimulatorUI";
 import Simulation from "./components/Simulation";
 
 export { default as Simulation } from './components/Simulation'
+export { default as SimulatorUI } from './components/SimulatorUI'
 
 export default function start() {
   CPU.init();
