@@ -12,10 +12,10 @@ export default class SimulatorUI {
   static itemHeight: number = 14;
   static lines: string[]
 
-  static initUI() {
+  static initUI(programs: Record<string, string> = {}) {
     const programSelectorEl = UI.$Select('#programSelector');
     // init program selector
-    Object.keys(PROGRAMS).forEach(programName => {
+    Object.keys(programs).forEach(programName => {
       const option = document.createElement('option');
       option.value = programName;
       option.textContent = programName;

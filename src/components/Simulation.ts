@@ -89,10 +89,6 @@ export default class Simulation {
   }
 
   static runStop() {
-    if (CPU.running) {
-      this.stop();
-    } else {
-      this.run();
-    }
+    CPU.running ? this.stop() : this.run()
   }
 }
