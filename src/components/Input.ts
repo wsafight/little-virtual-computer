@@ -1,6 +1,6 @@
 import Display from "./Display";
 import Memory from "./Memory";
-import MemoryPosition from "./MemoryPosition";
+import MemoryPosition from "./memory/MemoryPosition";
 import SimulatorUI from "./SimulatorUI";
 
 export default class Input {

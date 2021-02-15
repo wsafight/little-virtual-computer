@@ -1,6 +1,6 @@
 import CPUInstructions from "./instruction";
 import CPU from "./CPU";
-import MemoryPosition from "./MemoryPosition";
+import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./Memory";
 
 export default class Assembler {

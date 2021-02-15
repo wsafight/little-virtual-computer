@@ -1,6 +1,6 @@
 import Memory from "./Memory";
 import CPU from "./CPU";
-import MemoryPosition from "./MemoryPosition";
+import MemoryPosition from "./memory/MemoryPosition";
 
 const FixedAudioContext: any = window.AudioContext || (window as any).webkitAudioContext
 

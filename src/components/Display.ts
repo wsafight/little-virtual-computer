@@ -1,5 +1,5 @@
 import { notNull } from "./utils";
-import MemoryPosition from "./MemoryPosition";
+import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./Memory";
 import SimulatorUI from "./SimulatorUI";
 
