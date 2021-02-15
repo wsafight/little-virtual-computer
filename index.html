@@ -86,10 +86,11 @@
         </div>
     </div>
 </div>
+<script src="./programs.js"></script>
 <script type="module">
   import start, {Simulation, SimulatorUI} from './dist/out.module.js'
 
-  start()
+  start(window.programs)
   window.Simulation = Simulation
   window.SimulatorUI = SimulatorUI
 </script>
