@@ -1,7 +1,7 @@
 import CPU from "./CPU";
 import Audio from "./Audio";
 import Display from "./Display";
-import Memory from "./Memory";
+import Memory from "./memory/Memory";
 import { TOTAL_MEMORY_SIZE } from "./memory/MemoryPosition";
 import Assembler from "./Assembler";
 import SimulatorUI from "./SimulatorUI";

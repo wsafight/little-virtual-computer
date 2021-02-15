@@ -1,5 +1,5 @@
 import CPU from "../CPU";
-import Memory from "../Memory";
+import Memory from "../memory/Memory";
 import { CPUInstructionProps } from "./interface";
 
 const jump_to: CPUInstructionProps = {

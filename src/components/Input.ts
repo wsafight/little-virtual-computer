@@ -1,5 +1,5 @@
 import Display from "./Display";
-import Memory from "./Memory";
+import Memory from "./memory/Memory";
 import MemoryPosition from "./memory/MemoryPosition";
 import SimulatorUI from "./SimulatorUI";
 

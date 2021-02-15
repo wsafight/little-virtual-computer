@@ -1,4 +1,4 @@
-import {TOTAL_MEMORY_SIZE} from './memory/MemoryPosition'
+import {TOTAL_MEMORY_SIZE} from './MemoryPosition'
 
 export default class Memory {
   static ram: any[] = []

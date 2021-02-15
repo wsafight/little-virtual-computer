@@ -3,7 +3,7 @@ import PROGRAMS from "../programs";
 import Simulation from "./Simulation";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
-import Memory from "./Memory";
+import Memory from "./memory/Memory";
 import CPUInstructions from "./instruction";
 
 export default class SimulatorUI {

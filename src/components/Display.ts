@@ -1,6 +1,6 @@
 import { notNull } from "./utils";
 import MemoryPosition from "./memory/MemoryPosition";
-import Memory from "./Memory";
+import Memory from "./memory/Memory";
 import SimulatorUI from "./SimulatorUI";
 
 const COLOR_PALETTE: Record<string, [number, number, number]> = {

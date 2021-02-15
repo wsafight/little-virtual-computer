@@ -1,5 +1,5 @@
 import { CPUInstructionProps } from "./interface";
-import Memory from "../Memory";
+import Memory from "../memory/Memory";
 
 const copy_to_from: CPUInstructionProps = {
   name: 'copy_to_from',

@@ -1,4 +1,4 @@
-import Memory from "./Memory";
+import Memory from "./memory/Memory";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 
