@@ -6,11 +6,13 @@ import Assembler from "./components/Assembler";
 import SimulatorUI from "./components/SimulatorUI";
 import Simulation from "./components/Simulation";
 
+import CPUInstructions from "./components/instruction";
+
 export { default as Simulation } from './components/Simulation'
 export { default as SimulatorUI } from './components/SimulatorUI'
 
 export default function start(programs: Record<string, string>) {
-  CPU.init();
+  CPU.init(CPUInstructions);
   Display.init();
   Input.init();
   Audio.init();
