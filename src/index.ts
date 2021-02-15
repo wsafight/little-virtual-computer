@@ -27,3 +27,5 @@ export default function start() {
 
   document.body.addEventListener('click', resumeAudio);
 }
+
+start()
