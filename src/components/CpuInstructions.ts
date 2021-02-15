@@ -1,5 +1,5 @@
 import Memory from "./Memory";
-import CPU from './Cpu'
+import CPU from './CPU'
 
 const cpuInstructions = {
   copy_to_from: {

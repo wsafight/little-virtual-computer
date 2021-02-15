@@ -1,10 +1,12 @@
-import CPU from "./components/Cpu";
+import CPU from "./components/CPU";
 import Display from "./components/Display";
 import Input from "./components/Input";
 import Audio from "./components/Audio";
 import Assembler from "./components/Assembler";
 import SimulatorUI from "./components/SimulatorUI";
 import Simulation from "./components/Simulation";
+
+export { default as Simulation } from './components/Simulation'
 
 export default function start() {
   CPU.init();
@@ -27,5 +29,3 @@ export default function start() {
 
   document.body.addEventListener('click', resumeAudio);
 }
-
-start()

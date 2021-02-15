@@ -1,7 +1,7 @@
 import { padRight, UI } from "./utils";
 import PROGRAMS from "../programs";
 import Simulation from "./Simulation";
-import CPU from "./Cpu";
+import CPU from "./CPU";
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
 import cpuInstructions from "./CpuInstructions";

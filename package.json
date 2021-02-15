@@ -2,7 +2,7 @@
   "name": "little-virtual-computer",
   "version": "0.0.1",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --outfile=dist/out.js"
+    "build": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/out.js"
   },
   "devDependencies": {
     "esbuild": "^0.8.44"

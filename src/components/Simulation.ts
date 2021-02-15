@@ -1,4 +1,4 @@
-import CPU from "./Cpu";
+import CPU from "./CPU";
 import Audio from "./Audio";
 import Display from "./Display";
 import Memory from "./Memory";

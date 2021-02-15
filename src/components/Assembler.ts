@@ -1,5 +1,5 @@
 import cpuInstructions from "./CpuInstructions";
-import CPU from "./Cpu";
+import CPU from "./CPU";
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
 
