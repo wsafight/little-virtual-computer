@@ -4,7 +4,7 @@ import Simulation from "./Simulation";
 import CPU from "./CPU";
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
-import cpuInstructions from "./CpuInstructions";
+import CPUInstructions from "./CPUInstructions";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
@@ -166,7 +166,7 @@ export default class SimulatorUI {
       const instruction = CPU.opcodesToInstructions.get(Memory.ram[i]);
       lines.push(`${padRight(i, 4)}: ${padRight(Memory.ram[i], 8)} ${instruction || ''}`);
       if (instruction) {
-        const operands = cpuInstructions[instruction].operands;
+        const operands = CPUInstructions[instruction].operands;
         for (let j = 0; j < operands.length; j++) {
           lines.push(`${padRight(i + 1 + j, 4)}: ${padRight(Memory.ram[i + 1 + j], 8)}   ${operands[j][0]} (${operands[j][1]})`);
         }

@@ -1,7 +1,7 @@
 import Memory from "./Memory";
 import CPU from './CPU'
 
-const cpuInstructions = {
+const CPUInstructions = {
   copy_to_from: {
     opcode: 9000,
     description: 'set value at address to the value at the given address',
@@ -303,4 +303,4 @@ const cpuInstructions = {
   },
 }
 
-export default cpuInstructions
+export default CPUInstructions

@@ -1,4 +1,4 @@
-import cpuInstructions from "./CpuInstructions";
+import CPUInstructions from "./CPUInstructions";
 import CPU from "./CPU";
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
@@ -7,8 +7,8 @@ export default class Assembler {
   static instructionsLabelOperands: Map<any, any> =  new Map()
 
   static initInstructionsLabelOperands() {
-    Object.keys(cpuInstructions).forEach(name => {
-      const labelOperandIndex = cpuInstructions[name].operands.findIndex((operand: string[]) =>
+    Object.keys(CPUInstructions).forEach(name => {
+      const labelOperandIndex = CPUInstructions[name].operands.findIndex((operand: string[]) =>
         operand[1] === 'label'
       );
       if (labelOperandIndex > -1) {
@@ -76,7 +76,7 @@ export default class Assembler {
           instruction.name !== 'data' &&
           instruction.name !== 'define'
         ) {
-          const expectedOperands = cpuInstructions[instruction.name].operands;
+          const expectedOperands = CPUInstructions[instruction.name].operands;
           if (instruction.operands.length !== expectedOperands.length) {
             const error = new Error(
               `Wrong number of operands for instruction ${instruction.name}
