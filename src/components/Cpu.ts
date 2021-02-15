@@ -1,8 +1,9 @@
 import MemoryPosition from "./MemoryPosition";
 import Memory from "./Memory";
 import cpuInstructions from "./CpuInstructions";
+import Input from "./Input";
 
-export default class Cpu {
+export default class CPU {
   static programCounter = MemoryPosition.PROGRAM_MEMORY_START
   static running: boolean = false
   static halted: boolean = false
@@ -20,7 +21,7 @@ export default class Cpu {
   }
 
   static step() {
-    // Input.updateInputs();
+    Input.updateInputs();
     const opcode = this.advanceProgramCounter();
     const instructionName = this.opcodesToInstructions.get(opcode);
     if (!instructionName) {
