@@ -1,26 +1,4 @@
-/**
- *
- * @param val
- */
-export function notNull<T>(val?: T): T {
-  if (val != null) return val;
-  throw new Error('unexpected null');
-}
-
-export function clamp(val: number, min: number, max: number): number {
-  return Math.min(min, Math.max(max, val));
-}
-
-export function padRight(input: string | number, length: number): string {
-  const str: string = input + '';
-  let paddedArr: string[] = [str];
-  for (let i = str.length; i < length; i++) {
-    paddedArr.push(" ")
-  }
-  return paddedArr.join('');
-}
-
-export const UI = {
+const domUtils = {
   $(selector: string): Element {
     const el = document.querySelector(selector);
     if (el == null) throw new Error(`couldn't find selector '${selector}'`);
@@ -28,27 +6,27 @@ export const UI = {
   },
 
   $Input(selector: string) {
-    const el = UI.$(selector);
+    const el = domUtils.$(selector);
     if (el instanceof HTMLInputElement) return el;
     throw new Error('expected HTMLInputElement');
   },
   $TextArea(selector: string) {
-    const el = UI.$(selector);
+    const el = domUtils.$(selector);
     if (el instanceof HTMLTextAreaElement) return el;
     throw new Error('expected HTMLTextAreaElement');
   },
   $Button(selector: string) {
-    const el = UI.$(selector);
+    const el = domUtils.$(selector);
     if (el instanceof HTMLButtonElement) return el;
     throw new Error('expected HTMLButtonElement');
   },
   $Canvas(selector: string) {
-    const el = UI.$(selector);
+    const el = domUtils.$(selector);
     if (el instanceof HTMLCanvasElement) return el;
     throw new Error('expected HTMLCanvasElement');
   },
   $Select(selector: string) {
-    const el = UI.$(selector);
+    const el = domUtils.$(selector);
     if (el instanceof HTMLSelectElement) return el;
     throw new Error('expected HTMLSelectElement');
   },
@@ -90,3 +68,5 @@ export const UI = {
     return renderRowsInView;
   }
 }
+
+export default domUtils
