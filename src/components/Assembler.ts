@@ -18,8 +18,9 @@ export default class Assembler {
     });
   }
 
-  static parseProgramText(programText: string) {
+  static parseProgramText(programText: string): any[] {
     const programInstructions = [];
+
     const lines = programText.split('\n');
     let line: string = ''
     let i: number = 0;
@@ -103,7 +104,7 @@ export default class Assembler {
     return programInstructions;
   }
 
-  static assembleAndLoadProgram(programInstructions: any) {
+  static assembleAndLoadProgram(programInstructions: any): void {
     // 'label' is a special case – it's not really an instruction which the CPU
     // understands. Instead, it's a marker for the location of the next
     // instruction, which we can substitute for the actual location once we know
@@ -182,7 +183,7 @@ export default class Assembler {
   }
 
   static init(instructions: CPUInstructions) {
-    this.instructions = instructions
+    Assembler.instructions = instructions
     this.initInstructionsLabelOperands();
   }
 }

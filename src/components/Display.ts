@@ -1,6 +1,7 @@
 import { notNull } from "./utils";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
+import { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "../constant";
 
 const COLOR_PALETTE: Record<string, [number, number, number]> = {
   '0': [0, 0, 0], // Black
@@ -22,9 +23,9 @@ const COLOR_PALETTE: Record<string, [number, number, number]> = {
 }
 
 export default class Display {
-  static readonly SCREEN_WIDTH = 30
-  static readonly SCREEN_HEIGHT = 30
-  static readonly SCREEN_PIXEL_SCALE = 20
+  static readonly SCREEN_WIDTH = SCREEN_WIDTH
+  static readonly SCREEN_HEIGHT = SCREEN_HEIGHT
+  static readonly SCREEN_PIXEL_SCALE = SCREEN_PIXEL_SCALE
 
   static imageData: ImageData | null = (null/*: ?ImageData */)
   static canvasCtx: CanvasRenderingContext2D | null = (null/*: ?CanvasRenderingContext2D */)

@@ -1,9 +1,7 @@
 import { padRight, UI } from "../components/utils";
 import Simulation from "./Simulation";
-import CPU from "../components/CPU";
+import { Computer } from "../interface";
 import MemoryPosition from "../components/memory/MemoryPosition";
-import Memory from "../components/memory/Memory";
-import { CPUInstructions } from "../interface";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
@@ -11,7 +9,7 @@ export default class SimulatorUI {
   static itemHeight: number = 14;
   static lines: string[]
 
-  static instructions: CPUInstructions
+  static computer: Computer
   static programs: Record<string, string> = {}
 
   static initUI(programs: Record<string, string> = {}) {
@@ -36,8 +34,8 @@ export default class SimulatorUI {
     return UI.$Canvas('#canvas');
   }
 
-  static init(instructions: CPUInstructions) {
-    this.instructions = instructions
+  static init(computer: Computer) {
+    this.computer = computer
   }
 
   static initScreen(width: number, height: number, pixelScale: number) {
@@ -97,7 +95,7 @@ export default class SimulatorUI {
 
   static updateSpeedUI() {
     const fullspeed = Simulation.delayBetweenCycles === 0;
-    const runningAtFullspeed = CPU.running && fullspeed;
+    const runningAtFullspeed = this.computer.isRunning() && fullspeed;
     UI.$Input('#fullspeed').checked = fullspeed;
     UI.$Input('#speed').value = String(-Simulation.delayBetweenCycles);
     UI.$('#debugger').classList.toggle('fullspeed', runningAtFullspeed);
@@ -106,13 +104,13 @@ export default class SimulatorUI {
   }
 
   static updateUI() {
-    UI.$Input('#programCounter').value = String(CPU.programCounter);
-    if (CPU.halted) {
+    UI.$Input('#programCounter').value = String(this.computer.getProgramCounter());
+    if (this.computer.isHalted()) {
       UI.$('#running').textContent = 'halted';
       UI.$Button('#stepButton').disabled = true;
       UI.$Button('#runButton').disabled = true;
     } else {
-      UI.$('#running').textContent = CPU.running ? 'running' : 'paused';
+      UI.$('#running').textContent = this.computer.isRunning() ? 'running' : 'paused';
       UI.$Button('#stepButton').disabled = false;
       UI.$Button('#runButton').disabled = false;
     }
@@ -120,9 +118,9 @@ export default class SimulatorUI {
     this.updateInputMemoryView();
     this.updateVideoMemoryView();
     this.updateAudioMemoryView();
-    if (Simulation.delayBetweenCycles > 300 || !CPU.running) {
+    if (Simulation.delayBetweenCycles > 300 || !this.computer.isRunning()) {
       if (typeof this.scrollToProgramLine == 'function') {
-        this.scrollToProgramLine(Math.max(0, CPU.programCounter - MemoryPosition.PROGRAM_MEMORY_START - 3));
+        this.scrollToProgramLine(Math.max(0, this.computer.getProgramCounter() - MemoryPosition.PROGRAM_MEMORY_START - 3));
       }
     }
   }
@@ -130,7 +128,7 @@ export default class SimulatorUI {
   static updateWorkingMemoryView() {
     const lines = [];
     for (let i = MemoryPosition.WORKING_MEMORY_START; i < MemoryPosition.WORKING_MEMORY_END; i++) {
-      lines.push(`${i}: ${Memory.ram[i]}`);
+      lines.push(`${i}: ${this.computer.getMemory(i)}`);
     }
     UI.$TextArea('#workingMemoryView').textContent = lines.join('\n');
   }
@@ -154,7 +152,7 @@ export default class SimulatorUI {
       (start, end) => (
         this.lines.slice(start, end)
           .map((l, i) => {
-            const current = MemoryPosition.PROGRAM_MEMORY_START + start + i === CPU.programCounter;
+            const current = MemoryPosition.PROGRAM_MEMORY_START + start + i === this.computer.getProgramCounter();
             return `
   <pre
     class="tablerow"
@@ -170,12 +168,12 @@ export default class SimulatorUI {
   static updateProgramMemoryView() {
     const lines: string[] = [];
     for (let i = MemoryPosition.PROGRAM_MEMORY_START; i < MemoryPosition.PROGRAM_MEMORY_END; i++) {
-      const instruction = CPU.opcodesToInstructions.get(Memory.ram[i]);
-      lines.push(`${padRight(i, 4)}: ${padRight(Memory.ram[i], 8)} ${instruction || ''}`);
+      const instruction = this.computer.getOpcodesToInstructions().get(this.computer.getMemory(i));
+      lines.push(`${padRight(i, 4)}: ${padRight(this.computer.getMemory(i), 8)} ${instruction || ''}`);
       if (instruction) {
-        const operands = this.instructions[instruction].operands;
+        const operands = this.computer.getInstructions()[instruction].operands;
         for (let j = 0; j < operands.length; j++) {
-          lines.push(`${padRight(i + 1 + j, 4)}: ${padRight(Memory.ram[i + 1 + j], 8)}   ${operands[j][0]} (${operands[j][1]})`);
+          lines.push(`${padRight(i + 1 + j, 4)}: ${padRight(this.computer.getMemory(i + 1 + j), 8)}   ${operands[j][0]} (${operands[j][1]})`);
         }
         i += operands.length;
       }
@@ -190,35 +188,35 @@ export default class SimulatorUI {
 
   static updateInputMemoryView() {
     UI.$TextArea('#inputMemoryView').textContent =
-      `${MemoryPosition.KEYCODE_0_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.KEYCODE_0_ADDRESS], 8)} keycode 0
-${MemoryPosition.KEYCODE_1_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.KEYCODE_1_ADDRESS], 8)} keycode 1
-${MemoryPosition.KEYCODE_2_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.KEYCODE_2_ADDRESS], 8)} keycode 2
-${MemoryPosition.MOUSE_X_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.MOUSE_X_ADDRESS], 8)} mouse x
-${MemoryPosition.MOUSE_Y_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.MOUSE_Y_ADDRESS], 8)} mouse y
-${MemoryPosition.MOUSE_PIXEL_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.MOUSE_PIXEL_ADDRESS], 8)} mouse pixel
-${MemoryPosition.MOUSE_BUTTON_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.MOUSE_BUTTON_ADDRESS], 8)} mouse button
-${MemoryPosition.RANDOM_NUMBER_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.RANDOM_NUMBER_ADDRESS], 8)} random number
-${MemoryPosition.CURRENT_TIME_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.CURRENT_TIME_ADDRESS], 8)} current time`;
+      `${MemoryPosition.KEYCODE_0_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_0_ADDRESS), 8)} keycode 0
+${MemoryPosition.KEYCODE_1_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_1_ADDRESS), 8)} keycode 1
+${MemoryPosition.KEYCODE_2_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_2_ADDRESS), 8)} keycode 2
+${MemoryPosition.MOUSE_X_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_X_ADDRESS), 8)} mouse x
+${MemoryPosition.MOUSE_Y_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_Y_ADDRESS), 8)} mouse y
+${MemoryPosition.MOUSE_PIXEL_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_PIXEL_ADDRESS), 8)} mouse pixel
+${MemoryPosition.MOUSE_BUTTON_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_BUTTON_ADDRESS), 8)} mouse button
+${MemoryPosition.RANDOM_NUMBER_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.RANDOM_NUMBER_ADDRESS), 8)} random number
+${MemoryPosition.CURRENT_TIME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.CURRENT_TIME_ADDRESS), 8)} current time`;
   }
 
   static updateVideoMemoryView() {
     const lines = [];
     for (let i = MemoryPosition.VIDEO_MEMORY_START; i < MemoryPosition.VIDEO_MEMORY_END; i++) {
-      lines.push(`${i}: ${Memory.ram[i]}`);
+      lines.push(`${i}: ${this.computer.getMemory(i)}`);
     }
     UI.$TextArea('#videoMemoryView').textContent = lines.join('\n');
   }
 
   static updateAudioMemoryView() {
     UI.$TextArea('#audioMemoryView').textContent =
-      `${MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS], 8)} audio ch1 wavetype
-${MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS], 8)} audio ch1 frequency
-${MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS], 8)} audio ch1 volume
-${MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS], 8)} audio ch2 wavetype
-${MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS], 8)} audio ch2 frequency
-${MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS], 8)} audio ch2 volume
-${MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS], 8)} audio ch3 wavetype
-${MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS], 8)} audio ch3 frequency
-${MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS}: ${padRight(Memory.ram[MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS], 8)} audio ch3 volume`;
+      `${MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS), 8)} audio ch1 wavetype
+${MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS), 8)} audio ch1 frequency
+${MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS), 8)} audio ch1 volume
+${MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS), 8)} audio ch2 wavetype
+${MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS), 8)} audio ch2 frequency
+${MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS), 8)} audio ch2 volume
+${MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS), 8)} audio ch3 wavetype
+${MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS), 8)} audio ch3 frequency
+${MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS), 8)} audio ch3 volume`;
   }
 }

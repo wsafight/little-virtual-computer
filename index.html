@@ -87,9 +87,10 @@
 </div>
 <script src="./programs.js"></script>
 <script type="module">
-  import start, {Simulation, SimulatorUI} from './dist/out.module.js'
-
-  start(window.programs)
+  import initComputer from './dist/computer.module.js'
+  const computer = initComputer()
+  import simulatorStart, {SimulatorUI, Simulation} from "./dist/simulator.module.js";
+  simulatorStart(computer, window.programs)
   window.Simulation = Simulation
   window.SimulatorUI = SimulatorUI
 </script>
