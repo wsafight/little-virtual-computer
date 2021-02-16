@@ -83,7 +83,7 @@ export default class SimulatorUI {
     this.updateSpeedUI();
   }
 
-  static setFullspeed() {
+  static setFullSpeed() {
     const fullspeedEl = UI.$Input('#fullspeed');
     if (fullspeedEl && fullspeedEl.checked) {
       Simulation.delayBetweenCycles = 0;

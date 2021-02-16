@@ -47,7 +47,11 @@ export default class Simulation {
     this.computer.updateAudio();
   }
 
-  static loadProgramAndReset(computer: any) {
+  static init(computer: Computer) {
+    this.computer = computer
+  }
+
+  static loadProgramAndReset() {
     /*
     In a real computer, memory addresses which have never had any value set are
     considered 'uninitialized', and might contain any garbage value, but to keep
@@ -56,8 +60,8 @@ export default class Simulation {
     for us to mistakenly read from the wrong place in memory if we have a bug in
     our simulated program where we get the memory address wrong.
     */
-    this.computer = computer
-    computer.resetMemory()
+
+    this.computer.resetMemory()
 
     const programText = SimulatorUI.getProgramText();
     console.log(programText)

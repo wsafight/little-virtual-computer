@@ -4,14 +4,13 @@ import { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "./constant";
 import Audio from "./components/Audio";
 import { Computer } from "./interface";
 
-export { default as Simulation } from './simulator/Simulation'
-export { default as SimulatorUI } from './simulator/SimulatorUI'
 
 export default function simulatorStart(computer: Computer,programs: Record<string, string>) {
   SimulatorUI.init(computer)
   SimulatorUI.initScreen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_PIXEL_SCALE);
   SimulatorUI.initUI(programs);
-  Simulation.loadProgramAndReset(computer);
+  Simulation.init(computer)
+  Simulation.loadProgramAndReset();
 
   // enable audio to work with chrome autoplay policy :'(
   if (!document.body) throw new Error('DOM not ready');
@@ -23,5 +22,15 @@ export default function simulatorStart(computer: Computer,programs: Record<strin
   }
 
   document.body.addEventListener('click', resumeAudio);
+
+  return {
+    selectProgram: () => SimulatorUI.selectProgram(),
+    loadProgramAndReset: () => Simulation.loadProgramAndReset(),
+    runStop: () => Simulation.runStop(),
+    stepOnce: () => Simulation.stepOnce(),
+    editProgramText: () => SimulatorUI.editProgramText(),
+    setSpeed: () => SimulatorUI.setSpeed(),
+    setFullSpeed: () => SimulatorUI.setFullSpeed()
+  }
 }
 
