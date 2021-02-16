@@ -1,6 +1,7 @@
 {
   "name": "little-virtual-computer",
   "version": "0.0.1",
+  "description": "Learn how computers work by simulating them in Javascript",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/out.module.js"
   },
