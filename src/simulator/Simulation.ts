@@ -1,9 +1,9 @@
-import CPU from "./CPU";
-import Audio from "./Audio";
-import Display from "./Display";
-import Memory from "./memory/Memory";
-import { TOTAL_MEMORY_SIZE } from "./memory/MemoryPosition";
-import Assembler from "./Assembler";
+import CPU from "../components/CPU";
+import Audio from "../components/Audio";
+import Display from "../components/Display";
+import Memory from "../components/memory/Memory";
+import { TOTAL_MEMORY_SIZE } from "../components/memory/MemoryPosition";
+import Assembler from "../components/Assembler";
 import SimulatorUI from "./SimulatorUI";
 
 export default class Simulation {

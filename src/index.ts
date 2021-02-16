@@ -3,18 +3,20 @@ import Display from "./components/Display";
 import Input from "./components/Input";
 import Audio from "./components/Audio";
 import Assembler from "./components/Assembler";
-import SimulatorUI from "./components/SimulatorUI";
-import Simulation from "./components/Simulation";
+import SimulatorUI from "./simulator/SimulatorUI";
+import Simulation from "./simulator/Simulation";
 
 import CPUInstructions from "./instruction";
+import { notNull } from "./components/utils";
 
-export { default as Simulation } from './components/Simulation'
-export { default as SimulatorUI } from './components/SimulatorUI'
+export { default as Simulation } from './simulator/Simulation'
+export { default as SimulatorUI } from './simulator/SimulatorUI'
 
 export default function start(programs: Record<string, string>) {
+  const canvas = notNull(SimulatorUI.getCanvas())
   CPU.init(CPUInstructions);
-  Display.init();
-  Input.init();
+  Display.init(canvas.getContext('2d') as CanvasRenderingContext2D);
+  Input.init(canvas);
   Audio.init();
   Assembler.init(CPUInstructions);
   SimulatorUI.init(CPUInstructions)

@@ -1,7 +1,6 @@
 import { notNull } from "./utils";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import SimulatorUI from "./SimulatorUI";
 
 const COLOR_PALETTE: Record<string, [number, number, number]> = {
   '0': [0, 0, 0], // Black
@@ -38,8 +37,7 @@ export default class Display {
     return color;
   }
 
-  static init() {
-    const canvasCtx: CanvasRenderingContext2D = notNull(SimulatorUI.getCanvas().getContext('2d')) as CanvasRenderingContext2D;
+  static init(canvasCtx: CanvasRenderingContext2D) {
     Display.canvasCtx = canvasCtx;
     this.imageData = canvasCtx.createImageData(Display.SCREEN_WIDTH, Display.SCREEN_HEIGHT);
   }

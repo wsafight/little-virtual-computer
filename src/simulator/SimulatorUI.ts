@@ -1,8 +1,8 @@
-import { padRight, UI } from "./utils";
+import { padRight, UI } from "../components/utils";
 import Simulation from "./Simulation";
-import CPU from "./CPU";
-import MemoryPosition from "./memory/MemoryPosition";
-import Memory from "./memory/Memory";
+import CPU from "../components/CPU";
+import MemoryPosition from "../components/memory/MemoryPosition";
+import Memory from "../components/memory/Memory";
 import { CPUInstructions } from "../interface";
 
 export default class SimulatorUI {

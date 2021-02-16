@@ -1,7 +1,6 @@
 import Display from "./Display";
 import Memory from "./memory/Memory";
 import MemoryPosition from "./memory/MemoryPosition";
-import SimulatorUI from "./SimulatorUI";
 
 export default class Input {
   static keysPressed: Set<string> = new Set()
@@ -9,7 +8,7 @@ export default class Input {
   static mouseX: number = 0
   static mouseY: number = 0
 
-  static init() {
+  static init(canvas: HTMLCanvasElement) {
     if (!document.body) throw new Error('DOM not ready');
 
     document.body.onkeydown = (event) => {
@@ -27,9 +26,9 @@ export default class Input {
       this.mouseDown = false;
     };
 
-    const screenPageY = SimulatorUI.getCanvas().getBoundingClientRect().top + window.scrollY;
-    const screenPageX = SimulatorUI.getCanvas().getBoundingClientRect().left + window.scrollX;
-    SimulatorUI.getCanvas().onmousemove = (event) => {
+    const screenPageY = canvas.getBoundingClientRect().top + window.scrollY;
+    const screenPageX = canvas.getBoundingClientRect().left + window.scrollX;
+    canvas.onmousemove = (event) => {
       this.mouseX = Math.floor((event.pageX - screenPageX) / Display.SCREEN_PIXEL_SCALE);
       this.mouseY = Math.floor((event.pageY - screenPageY) / Display.SCREEN_PIXEL_SCALE);
     };
