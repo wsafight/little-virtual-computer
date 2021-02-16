@@ -18,7 +18,7 @@ export default class Audio {
 
   static audioCtx = new FixedAudioContext()
 
-  static addAudioChannel(wavetypeAddr: number, freqAddr: number, volAddr: number) {
+  static addAudioChannel(waveTypeAddr: number, freqAddr: number, volAddr: number) {
     const oscillatorNode: OscillatorNode = this.audioCtx.createOscillator();
     const gainNode = this.audioCtx.createGain();
     oscillatorNode.connect(gainNode);
@@ -37,7 +37,7 @@ export default class Audio {
 
     return this.audioChannels.push({
       state,
-      wavetypeAddr,
+      waveTypeAddr,
       freqAddr,
       volAddr,
       gainNode,
@@ -49,7 +49,7 @@ export default class Audio {
     this.audioChannels.forEach(channel => {
       const frequency = (Memory.ram[channel.freqAddr] || 0) / 1000;
       const gain = !CPU.running ? 0 : (Memory.ram[channel.volAddr] || 0) / 100 * this.MAX_GAIN;
-      const oscillatorType = WAVE_TYPE[Memory.ram[channel.wavetypeAddr]] || WAVE_TYPE['0'];
+      const oscillatorType = WAVE_TYPE[Memory.ram[channel.waveTypeAddr]] || WAVE_TYPE['0'];
 
       const {state} = channel;
       if (state.gain !== gain) {
@@ -69,17 +69,17 @@ export default class Audio {
 
   static init() {
     this.addAudioChannel(
-      MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS,
+      MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS,
       MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS,
       MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS
     );
     this.addAudioChannel(
-      MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS,
+      MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS,
       MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS,
       MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS
     );
     this.addAudioChannel(
-      MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS,
+      MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS,
       MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS,
       MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS
     );

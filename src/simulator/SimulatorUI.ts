@@ -85,8 +85,8 @@ export default class SimulatorUI {
   }
 
   static setFullSpeed() {
-    const fullspeedEl = domUtils.$Input('#fullspeed');
-    if (fullspeedEl && fullspeedEl.checked) {
+    const fullSpeedEl = domUtils.$Input('#full-speed');
+    if (fullSpeedEl && fullSpeedEl.checked) {
       Simulation.delayBetweenCycles = 0;
     } else {
       Simulation.delayBetweenCycles = 1;
@@ -95,12 +95,12 @@ export default class SimulatorUI {
   }
 
   static updateSpeedUI() {
-    const fullspeed = Simulation.delayBetweenCycles === 0;
-    const runningAtFullspeed = this.computer.isRunning() && fullspeed;
-    domUtils.$Input('#fullspeed').checked = fullspeed;
+    const fullSpeed = Simulation.delayBetweenCycles === 0;
+    const runningAtFullSpeed = this.computer.isRunning() && fullSpeed;
+    domUtils.$Input('#full-speed').checked = fullSpeed;
     domUtils.$Input('#speed').value = String(-Simulation.delayBetweenCycles);
-    domUtils.$('#debugger').classList.toggle('fullspeed', runningAtFullspeed);
-    domUtils.$('#debuggerMessageArea').textContent = runningAtFullspeed ?
+    domUtils.$('#debugger').classList.toggle('full-speed', runningAtFullSpeed);
+    domUtils.$('#debuggerMessageArea').textContent = runningAtFullSpeed ?
       'debug UI disabled when CPU.running at full speed' : '';
   }
 
@@ -156,7 +156,7 @@ export default class SimulatorUI {
             const current = MemoryPosition.PROGRAM_MEMORY_START + start + i === this.computer.getProgramCounter();
             return `
   <pre
-    class="tablerow"
+    class="table-row"
     style="height: ${this.itemHeight}px; background: ${current ? '#eee' : 'none'}"
   >${l}</pre>
             `;
@@ -210,13 +210,13 @@ ${MemoryPosition.CURRENT_TIME_ADDRESS}: ${padRight(this.computer.getMemory(Memor
 
   static updateAudioMemoryView() {
     domUtils.$TextArea('#audioMemoryView').textContent =
-      `${MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS), 8)} audio ch1 wavetype
+      `${MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS), 8)} audio ch1 wavetype
 ${MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS), 8)} audio ch1 frequency
 ${MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS), 8)} audio ch1 volume
-${MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_WAVETYPE_ADDRESS), 8)} audio ch2 wavetype
+${MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS), 8)} audio ch2 wavetype
 ${MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS), 8)} audio ch2 frequency
 ${MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS), 8)} audio ch2 volume
-${MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_WAVETYPE_ADDRESS), 8)} audio ch3 wavetype
+${MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS), 8)} audio ch3 wavetype
 ${MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS), 8)} audio ch3 frequency
 ${MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS), 8)} audio ch3 volume`;
   }

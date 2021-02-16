@@ -27,8 +27,8 @@ export default class Display {
   static readonly SCREEN_HEIGHT = SCREEN_HEIGHT
   static readonly SCREEN_PIXEL_SCALE = SCREEN_PIXEL_SCALE
 
-  static imageData: ImageData | null = (null/*: ?ImageData */)
-  static canvasCtx: CanvasRenderingContext2D | null = (null/*: ?CanvasRenderingContext2D */)
+  static imageData: ImageData | null
+  static canvasCtx: CanvasRenderingContext2D | null
 
   static getColor(pixelColorId: string, address: number) {
     const color = COLOR_PALETTE[pixelColorId];

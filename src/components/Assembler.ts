@@ -115,9 +115,7 @@ export default class Assembler {
       if (instruction.name === 'label') {
         const labelName = instruction.operands[0];
         labelAddresses[labelName] = labelAddress;
-      } else if (instruction.name === 'define') {
-        continue;
-      } else {
+      } else if (instruction.name !== 'define'){
         // advance labelAddress by the length of the instruction and its operands
         labelAddress += 1 + instruction.operands.length;
       }
@@ -137,7 +135,7 @@ export default class Assembler {
       }
 
       if (instruction.name === 'data') {
-        for (var i = 0; i < instruction.operands.length; i++) {
+        for (let i = 0; i < instruction.operands.length; i++) {
           Memory.ram[loadingAddress++] = instruction.operands[i];
         }
         continue;
@@ -165,7 +163,7 @@ export default class Assembler {
         operands[labelOperandIndex] = labelAddress;
       }
 
-      for (var i = 0; i < operands.length; i++) {
+      for (let i = 0; i < operands.length; i++) {
         let value = null;
         if (typeof operands[i] === 'string') {
           if (operands[i] in defines) {
