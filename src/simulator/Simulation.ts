@@ -25,7 +25,7 @@ export default class Simulation {
     }
     Simulation.updateOutputs();
     if (this.computer.isRunning()) {
-      setTimeout(Simulation.loop, Simulation.delayBetweenCycles);
+      setTimeout(() => Simulation.loop(), Simulation.delayBetweenCycles);
     }
   }
 
