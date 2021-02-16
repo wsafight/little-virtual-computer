@@ -1,7 +1,7 @@
-import { notNull } from "./utils";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
 import { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "../constant";
+import notNull from "../utils/notNull";
 
 const COLOR_PALETTE: Record<string, [number, number, number]> = {
   '0': [0, 0, 0], // Black

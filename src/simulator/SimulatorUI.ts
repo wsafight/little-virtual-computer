@@ -1,7 +1,8 @@
-import { padRight, UI } from "../components/utils";
 import Simulation from "./Simulation";
 import { Computer } from "../interface";
 import MemoryPosition from "../components/memory/MemoryPosition";
+import domUtils from "../utils/dom";
+import padRight from "../utils/padRight";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
@@ -14,7 +15,7 @@ export default class SimulatorUI {
 
   static initUI(programs: Record<string, string> = {}) {
     this.programs = programs
-    const programSelectorEl = UI.$Select('#programSelector');
+    const programSelectorEl = domUtils.$Select('#programSelector');
     // init program selector
     Object.keys(programs).forEach(programName => {
       const option = document.createElement('option');
@@ -27,11 +28,11 @@ export default class SimulatorUI {
   }
 
   static getProgramText() {
-    return UI.$TextArea('#program').value;
+    return domUtils.$TextArea('#program').value;
   }
 
   static getCanvas() {
-    return UI.$Canvas('#canvas');
+    return domUtils.$Canvas('#canvas');
   }
 
   static init(computer: Computer) {
@@ -56,35 +57,35 @@ export default class SimulatorUI {
 
   static setLoadedProgramText(programText: string) {
     this.loadedProgramText = programText;
-    UI.$Button('#loadProgramButton').disabled = true;
+    domUtils.$Button('#loadProgramButton').disabled = true;
   }
 
   static updateLoadProgramButton() {
-    UI.$Button('#loadProgramButton').disabled = this.loadedProgramText === this.getProgramText();
+    domUtils.$Button('#loadProgramButton').disabled = this.loadedProgramText === this.getProgramText();
   }
 
   static selectProgram() {
-    this.selectedProgram = UI.$Select('#programSelector').value;
+    this.selectedProgram = domUtils.$Select('#programSelector').value;
     localStorage.setItem('selectedProgram', this.selectedProgram);
-    UI.$TextArea('#program').value =
+    domUtils.$TextArea('#program').value =
       localStorage.getItem(this.selectedProgram) || this.programs[this.selectedProgram] || '';
     this.updateLoadProgramButton();
   }
 
   static editProgramText() {
     if (this.selectedProgram.startsWith('Custom')) {
-      localStorage.setItem(this.selectedProgram, UI.$TextArea('#program').value);
+      localStorage.setItem(this.selectedProgram, domUtils.$TextArea('#program').value);
     }
     this.updateLoadProgramButton();
   }
 
   static setSpeed() {
-    Simulation.delayBetweenCycles = -parseInt(UI.$Input('#speed').value, 10);
+    Simulation.delayBetweenCycles = -parseInt(domUtils.$Input('#speed').value, 10);
     this.updateSpeedUI();
   }
 
   static setFullSpeed() {
-    const fullspeedEl = UI.$Input('#fullspeed');
+    const fullspeedEl = domUtils.$Input('#fullspeed');
     if (fullspeedEl && fullspeedEl.checked) {
       Simulation.delayBetweenCycles = 0;
     } else {
@@ -96,23 +97,23 @@ export default class SimulatorUI {
   static updateSpeedUI() {
     const fullspeed = Simulation.delayBetweenCycles === 0;
     const runningAtFullspeed = this.computer.isRunning() && fullspeed;
-    UI.$Input('#fullspeed').checked = fullspeed;
-    UI.$Input('#speed').value = String(-Simulation.delayBetweenCycles);
-    UI.$('#debugger').classList.toggle('fullspeed', runningAtFullspeed);
-    UI.$('#debuggerMessageArea').textContent = runningAtFullspeed ?
+    domUtils.$Input('#fullspeed').checked = fullspeed;
+    domUtils.$Input('#speed').value = String(-Simulation.delayBetweenCycles);
+    domUtils.$('#debugger').classList.toggle('fullspeed', runningAtFullspeed);
+    domUtils.$('#debuggerMessageArea').textContent = runningAtFullspeed ?
       'debug UI disabled when CPU.running at full speed' : '';
   }
 
   static updateUI() {
-    UI.$Input('#programCounter').value = String(this.computer.getProgramCounter());
+    domUtils.$Input('#programCounter').value = String(this.computer.getProgramCounter());
     if (this.computer.isHalted()) {
-      UI.$('#running').textContent = 'halted';
-      UI.$Button('#stepButton').disabled = true;
-      UI.$Button('#runButton').disabled = true;
+      domUtils.$('#running').textContent = 'halted';
+      domUtils.$Button('#stepButton').disabled = true;
+      domUtils.$Button('#runButton').disabled = true;
     } else {
-      UI.$('#running').textContent = this.computer.isRunning() ? 'running' : 'paused';
-      UI.$Button('#stepButton').disabled = false;
-      UI.$Button('#runButton').disabled = false;
+      domUtils.$('#running').textContent = this.computer.isRunning() ? 'running' : 'paused';
+      domUtils.$Button('#stepButton').disabled = false;
+      domUtils.$Button('#runButton').disabled = false;
     }
     this.updateWorkingMemoryView();
     this.updateInputMemoryView();
@@ -130,12 +131,12 @@ export default class SimulatorUI {
     for (let i = MemoryPosition.WORKING_MEMORY_START; i < MemoryPosition.WORKING_MEMORY_END; i++) {
       lines.push(`${i}: ${this.computer.getMemory(i)}`);
     }
-    UI.$TextArea('#workingMemoryView').textContent = lines.join('\n');
+    domUtils.$TextArea('#workingMemoryView').textContent = lines.join('\n');
   }
 
   static scrollToProgramLine(item: number) {
 
-    UI.$('#programMemoryView').scrollTop = item * this.itemHeight;
+    domUtils.$('#programMemoryView').scrollTop = item * this.itemHeight;
 
     if (Array.isArray(this.lines) && this.lines.length) {
       this.renderProgramMemoryView();
@@ -144,8 +145,8 @@ export default class SimulatorUI {
   }
 
   static renderProgramMemoryView() {
-    return UI.virtualizedScrollView(
-      UI.$('#programMemoryView') as HTMLElement,
+    return domUtils.virtualizedScrollView(
+      domUtils.$('#programMemoryView') as HTMLElement,
       136,
       this.itemHeight,
       this.lines.length,
@@ -187,7 +188,7 @@ export default class SimulatorUI {
   }
 
   static updateInputMemoryView() {
-    UI.$TextArea('#inputMemoryView').textContent =
+    domUtils.$TextArea('#inputMemoryView').textContent =
       `${MemoryPosition.KEYCODE_0_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_0_ADDRESS), 8)} keycode 0
 ${MemoryPosition.KEYCODE_1_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_1_ADDRESS), 8)} keycode 1
 ${MemoryPosition.KEYCODE_2_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_2_ADDRESS), 8)} keycode 2
@@ -204,11 +205,11 @@ ${MemoryPosition.CURRENT_TIME_ADDRESS}: ${padRight(this.computer.getMemory(Memor
     for (let i = MemoryPosition.VIDEO_MEMORY_START; i < MemoryPosition.VIDEO_MEMORY_END; i++) {
       lines.push(`${i}: ${this.computer.getMemory(i)}`);
     }
-    UI.$TextArea('#videoMemoryView').textContent = lines.join('\n');
+    domUtils.$TextArea('#videoMemoryView').textContent = lines.join('\n');
   }
 
   static updateAudioMemoryView() {
-    UI.$TextArea('#audioMemoryView').textContent =
+    domUtils.$TextArea('#audioMemoryView').textContent =
       `${MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_WAVETYPE_ADDRESS), 8)} audio ch1 wavetype
 ${MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS), 8)} audio ch1 frequency
 ${MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS), 8)} audio ch1 volume

@@ -4,13 +4,14 @@ import Input from "./components/Input";
 import Audio from "./components/Audio";
 import Assembler from "./components/Assembler";
 import CPUInstructions from "./instruction";
-import { notNull, UI } from "./components/utils";
 import { TOTAL_MEMORY_SIZE } from "./components/memory/MemoryPosition";
 import Memory from "./components/memory/Memory";
 import { Computer } from "./interface";
+import notNull from "./utils/notNull";
+import domUtils from "./utils/dom";
 
 export default function initComputer(): Computer {
-  const canvas = notNull(UI.$Canvas('#canvas'))
+  const canvas = notNull(domUtils.$Canvas('#canvas'))
   CPU.init(CPUInstructions);
   Display.init(canvas.getContext('2d') as CanvasRenderingContext2D);
   Input.init(canvas);
