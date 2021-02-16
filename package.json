@@ -4,7 +4,7 @@
   "description": "Learn how computers work by simulating them in Javascript",
   "scripts": {
     "build": "npm run build-computer & npm run build-simulator",
-    "build-simulator": "esbuild src/simulator.ts --bundle --format=esm --outfile=dist/simulator.module.js",
+    "build-simulator": "esbuild src/simulator.ts --bundle --minify --format=esm --outfile=dist/simulator.module.js",
     "build-computer": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/computer.module.js"
   },
   "devDependencies": {
