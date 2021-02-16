@@ -1,5 +1,4 @@
 import { padRight, UI } from "./utils";
-import PROGRAMS from "../programs";
 import Simulation from "./Simulation";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
@@ -13,8 +12,10 @@ export default class SimulatorUI {
   static lines: string[]
 
   static instructions: CPUInstructions
+  static programs: Record<string, string> = {}
 
   static initUI(programs: Record<string, string> = {}) {
+    this.programs = programs
     const programSelectorEl = UI.$Select('#programSelector');
     // init program selector
     Object.keys(programs).forEach(programName => {
@@ -68,7 +69,7 @@ export default class SimulatorUI {
     this.selectedProgram = UI.$Select('#programSelector').value;
     localStorage.setItem('selectedProgram', this.selectedProgram);
     UI.$TextArea('#program').value =
-      localStorage.getItem(this.selectedProgram) || PROGRAMS[this.selectedProgram] || '';
+      localStorage.getItem(this.selectedProgram) || this.programs[this.selectedProgram] || '';
     this.updateLoadProgramButton();
   }
 
