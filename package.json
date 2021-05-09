@@ -8,6 +8,6 @@
     "build-computer": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/computer.module.js"
   },
   "devDependencies": {
-    "esbuild": "^0.8.50"
+    "esbuild": "^0.11.20"
   }
 }
