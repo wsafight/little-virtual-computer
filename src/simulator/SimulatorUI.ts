@@ -135,16 +135,12 @@ export default class SimulatorUI {
   }
 
   static scrollToProgramLine(item: number) {
-
     domUtils.$('#programMemoryView').scrollTop = item * this.itemHeight;
-
-    if (Array.isArray(this.lines) && this.lines.length) {
-      this.renderProgramMemoryView();
-    }
-
+    this.renderProgramMemoryView()();
   }
 
   static renderProgramMemoryView() {
+    domUtils.$('#programMemoryView').innerHTML = '';
     return domUtils.virtualizedScrollView(
       domUtils.$('#programMemoryView') as HTMLElement,
       136,
@@ -168,6 +164,7 @@ export default class SimulatorUI {
 
   static updateProgramMemoryView() {
     const lines: string[] = [];
+
     for (let i = MemoryPosition.PROGRAM_MEMORY_START; i < MemoryPosition.PROGRAM_MEMORY_END; i++) {
       const instruction = this.computer.getOpcodesToInstructions().get(this.computer.getMemory(i));
       lines.push(`${padRight(i, 4)}: ${padRight(this.computer.getMemory(i), 8)} ${instruction || ''}`);
@@ -181,10 +178,7 @@ export default class SimulatorUI {
     }
 
     this.lines = lines
-    if (Array.isArray(this.lines) && this.lines.length) {
-      this.renderProgramMemoryView();
-    }
-    this.lines = []
+    this.renderProgramMemoryView()();
   }
 
   static updateInputMemoryView() {

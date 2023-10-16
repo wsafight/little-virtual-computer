@@ -44,7 +44,7 @@
     make it go, or load a different program with the program selector in the bottom left.
 </div>
 <div style="display: flex;">
-    <div style="width: 620px">
+    <div style="width: 700px">
         <div style="width: 600px; height: 600px">
             <canvas id="canvas"></canvas>
         </div>
@@ -54,7 +54,7 @@
                 <select id="programSelector" onchange="selectProgram()"></select>
                 <button id="loadProgramButton" onclick="loadProgramAndReset()">load program</button>
             </label>
-            <textarea id="program" rows="10" cols="80" onchange="editProgramText()"
+            <textarea id="program" rows="18" cols="70" onchange="editProgramText()"
                       onkeyup="editProgramText()" style="margin-top: 10px">
         </textarea>
         </div>
@@ -80,7 +80,7 @@
             <textarea id="inputMemoryView" readonly rows="8" cols="40"></textarea>
             video memory (slots 2100 - 2999):
             <textarea id="videoMemoryView" readonly rows="10" cols="40"></textarea>
-            audio memory (slots 3000 - 3000):
+            audio memory (slots 3000 - 3010):
             <textarea id="audioMemoryView" readonly rows="10" cols="40"></textarea>
         </div>
     </div>

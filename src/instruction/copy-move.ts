@@ -1,6 +1,7 @@
 import { CPUInstructionProps } from "./interface";
 import Memory from "../components/memory/Memory";
 
+// 拷贝
 const copy_to_from: CPUInstructionProps = {
   name: 'copy_to_from',
   opcode: 9000,
@@ -22,6 +23,7 @@ const copy_to_from_constant: CPUInstructionProps = {
   },
 }
 
+// 指针
 const copy_to_from_ptr: CPUInstructionProps = {
   name: 'copy_to_from_ptr',
   opcode: 9002,

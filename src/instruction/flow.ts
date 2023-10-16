@@ -2,6 +2,7 @@ import CPU from "../components/CPU";
 import Memory from "../components/memory/Memory";
 import { CPUInstructionProps } from "./interface";
 
+// 流程
 const jump_to: CPUInstructionProps = {
   name: 'jump_to',
   opcode: 9100,

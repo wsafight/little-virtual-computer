@@ -31,6 +31,7 @@ export default class Simulation {
 
   static run() {
     this.computer.setRunning(true)
+    SimulatorUI.updateProgramMemoryView();
     SimulatorUI.updateUI();
     SimulatorUI.updateSpeedUI();
     this.loop();
@@ -38,6 +39,7 @@ export default class Simulation {
 
   static stop() {
     this.computer.setRunning(false)
+    SimulatorUI.updateProgramMemoryView();
     SimulatorUI.updateUI();
     SimulatorUI.updateSpeedUI();
   }
@@ -73,7 +75,6 @@ export default class Simulation {
     }
 
     SimulatorUI.setLoadedProgramText(programText);
-
     this.computer.resetCPU();
     this.updateOutputs();
     SimulatorUI.updateProgramMemoryView();

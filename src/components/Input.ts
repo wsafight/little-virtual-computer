@@ -2,6 +2,7 @@ import Display from "./Display";
 import Memory from "./memory/Memory";
 import MemoryPosition from "./memory/MemoryPosition";
 
+// 硬件输入
 export default class Input {
   static keysPressed: Set<string> = new Set()
   static mouseDown: boolean = false;
@@ -36,7 +37,7 @@ export default class Input {
 
   static updateInputs() {
     const mostRecentKeys = Array.from(Input.keysPressed.values()).reverse();
-
+    // 放入内存
     Memory.ram[MemoryPosition.KEYCODE_0_ADDRESS] = mostRecentKeys[0] || 0;
     Memory.ram[MemoryPosition.KEYCODE_1_ADDRESS] = mostRecentKeys[1] || 0;
     Memory.ram[MemoryPosition.KEYCODE_2_ADDRESS] = mostRecentKeys[2] || 0;

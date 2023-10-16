@@ -1,6 +1,7 @@
 import { CPUInstructionProps } from "./interface";
 import Memory from "../components/memory/Memory";
 
+// 对比运算
 const compare: CPUInstructionProps = {
   name: 'compare',
   opcode: 9090,

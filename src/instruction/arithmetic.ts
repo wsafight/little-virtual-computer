@@ -1,6 +1,7 @@
 import { CPUInstructionProps } from "./interface";
 import Memory from "../components/memory/Memory";
 
+// 数学运算
 const add: CPUInstructionProps = {
   name: 'add',
   opcode: 9010,

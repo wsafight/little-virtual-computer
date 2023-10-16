@@ -22,9 +22,13 @@ const COLOR_PALETTE: Record<string, [number, number, number]> = {
   '15': [0, 0, 128], // Navy
 }
 
+// 显示器
 export default class Display {
+  // 宽度
   static readonly SCREEN_WIDTH = SCREEN_WIDTH
+  // 高度
   static readonly SCREEN_HEIGHT = SCREEN_HEIGHT
+  // 像素比例（一个像素点多大）
   static readonly SCREEN_PIXEL_SCALE = SCREEN_PIXEL_SCALE
 
   static imageData: ImageData | null
@@ -43,17 +47,20 @@ export default class Display {
     this.imageData = canvasCtx.createImageData(Display.SCREEN_WIDTH, Display.SCREEN_HEIGHT);
   }
 
+  // 绘制
   static drawScreen() {
     const imageData = notNull(this.imageData);
     const videoMemoryLength = MemoryPosition.VIDEO_MEMORY_END - MemoryPosition.VIDEO_MEMORY_START;
     const pixelsRGBA = imageData!.data;
     for (let i = 0; i < videoMemoryLength; i++) {
       const pixelColorId: string = Memory.ram[MemoryPosition.VIDEO_MEMORY_START + i] as string;
+      // 程序启动的时获取 [0, 0, 0] 黑色
       const colorRGB = this.getColor(pixelColorId || '0', MemoryPosition.VIDEO_MEMORY_START + i);
       pixelsRGBA[i * 4] = colorRGB[0];
       pixelsRGBA[i * 4 + 1] = colorRGB[1];
       pixelsRGBA[i * 4 + 2] = colorRGB[2];
-      pixelsRGBA[i * 4 + 3] = 255; // full opacity
+      // 透明度
+      pixelsRGBA[i * 4 + 3] = 255;
     }
 
     const canvasCtx = notNull(this.canvasCtx);

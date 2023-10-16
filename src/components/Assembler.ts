@@ -3,15 +3,18 @@ import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
 import { CPUInstructions } from "../interface";
 
+// 汇编器
 export default class Assembler {
   static instructionsLabelOperands: Map<any, any> = new Map()
   static instructions: CPUInstructions = {}
 
   static initInstructionsLabelOperands() {
     Object.keys(this.instructions).forEach(name => {
+      // 找到 label 操作服好
       const labelOperandIndex = this.instructions[name].operands.findIndex((operand: string[]) =>
         operand[1] === 'label'
       );
+      // 存储
       if (labelOperandIndex > -1) {
         this.instructionsLabelOperands.set(name, labelOperandIndex);
       }
@@ -21,15 +24,18 @@ export default class Assembler {
   static parseProgramText(programText: string): any[] {
     const programInstructions = [];
 
+    // 拆分行
     const lines = programText.split('\n');
     let line: string = ''
     let i: number = 0;
     try {
       for (i = 0; i < lines.length; i++) {
         line = lines[i];
+        // 收集指令
         const instruction: Record<string, any> = {name: '', operands: []};
         let tokens: string[] = line.replace(/;.*$/, '') // strip comments
           .split(' ');
+        // token  
         for (let token of tokens) {
           // skip empty tokens
           if (token == null || token == "") {
@@ -79,6 +85,7 @@ export default class Assembler {
           instruction.name !== 'define'
         ) {
           const expectedOperands = this.instructions[instruction.name].operands;
+          // 操作数据不等于 传入的数据，抛出异常
           if (instruction.operands.length !== expectedOperands.length) {
             const error = new Error(
               `Wrong number of operands for instruction ${instruction.name}
@@ -100,6 +107,8 @@ export default class Assembler {
       // otherwise it must be a parsing/syntax error
       throw new Error(`Syntax error on program line ${i + 1}: '${line}'`);
     }
+
+    // 添加中止命令
     programInstructions.push({name: 'halt', operands: []});
     return programInstructions;
   }
@@ -124,6 +133,7 @@ export default class Assembler {
     const defines = {};
 
     // load instructions and operands into memory
+    // 程序内存
     let loadingAddress = MemoryPosition.PROGRAM_MEMORY_START;
     for (let instruction of programInstructions) {
       if (instruction.name === 'label') {
@@ -146,6 +156,7 @@ export default class Assembler {
       if (!opcode) {
         throw new Error(`No opcode found for instruction '${instruction.name}'`);
       }
+      // 放入对应的代码区
       Memory.ram[loadingAddress++] = opcode;
 
       // then, we write the operands for instruction to memory
