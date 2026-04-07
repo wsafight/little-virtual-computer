@@ -3,88 +3,309 @@
 <head>
     <title>Little Virtual Computer</title>
     <style type="text/css">
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
-            font-size: 12px;
-            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            background: #0f0f1a;
+            color: #c8ccd4;
         }
 
-        label {
-            display: block;
+        label { display: block; }
+
+        textarea, input, select, button {
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
         }
 
         textarea {
             display: block;
-            font-family: monospace;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            background: #1a1a2e;
+            color: #a9b1d6;
+            border: 1px solid #2a2a4a;
+            border-radius: 6px;
+            padding: 8px;
+            resize: vertical;
+        }
+
+        textarea:focus { outline: 1px solid #7aa2f7; border-color: #7aa2f7; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #2a2a4a;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0 0 6px;
+            font-weight: 600;
+            font-size: 1.6em;
+            color: #e0e0ff;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            margin: 0;
+            color: #7a7a9a;
+            font-size: 0.95em;
+        }
+
+        /* Main layout */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        /* Canvas area */
+        .canvas-wrap {
+            flex-shrink: 0;
+        }
+        .screen-frame {
+            width: 600px;
+            height: 600px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #2a2a4a;
+            box-shadow: 0 0 30px rgba(122, 162, 247, 0.08);
+            background: #000;
+        }
+
+        /* Program editor */
+        .program-area { margin-top: 16px; }
+        .program-area label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #7a7a9a;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #program {
+            width: 100%;
+            min-height: 280px;
+            margin-top: 8px;
+        }
+
+        select {
+            background: #1a1a2e;
+            color: #c8ccd4;
+            border: 1px solid #2a2a4a;
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+
+        /* Buttons */
+        button {
+            background: #2a2a4a;
+            color: #c8ccd4;
+            border: 1px solid #3a3a5a;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        button:hover { background: #3a3a5a; border-color: #7aa2f7; }
+        button:active { background: #4a4a6a; }
+        button:disabled { opacity: 0.4; cursor: default; }
+
+        /* Right panel */
+        .right-panel {
+            flex: 1;
+            min-width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+        }
+        .controls-bar .status {
+            margin-left: auto;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7aa2f7;
+        }
+
+        /* Speed controls */
+        .speed-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 14px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #7a7a9a;
+        }
+        .speed-controls label { display: flex; align-items: center; gap: 6px; }
+        input[type="range"] { accent-color: #7aa2f7; }
+        input[type="checkbox"] { accent-color: #7aa2f7; }
+
+        /* Debugger / memory panel */
+        #debugger {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         #debugger.full-speed, #debugger.full-speed input, #debugger.full-speed textarea {
-            background: #eee;
-            color: #999;
+            background: #12121f;
+            color: #444;
         }
+        #debugger.full-speed .mem-section { border-color: #1a1a2e; }
 
         #debuggerMessageArea {
             font-weight: bold;
+            color: #f7768e;
+            min-height: 18px;
+            font-size: 0.85em;
+        }
+
+        .mem-section {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .mem-section .mem-title {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #7a7a9a;
+            margin-bottom: 6px;
+        }
+        .mem-section label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #7a7a9a;
+            font-size: 0.85em;
+        }
+        .mem-section input[type="text"], .mem-section input:not([type]) {
+            background: #12121f;
+            border: 1px solid #2a2a4a;
+            border-radius: 4px;
+            padding: 3px 8px;
+            color: #a9b1d6;
+            width: 80px;
+        }
+        .mem-section textarea {
+            width: 100%;
+            font-size: 12px;
         }
 
         #programMemoryView {
-            width: 350px;
-            border: solid 1px grey;
+            width: 100%;
+            border: 1px solid #2a2a4a;
+            border-radius: 6px;
+            background: #12121f;
         }
 
         .table-row {
-            font-family: monospace;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 12px;
             margin: 0;
+            padding: 0 6px;
+            color: #a9b1d6;
         }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #12121f; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a3a5a; }
     </style>
 </head>
 <body>
-<div style="background-color: #eee;padding: 1em;margin: 1em 0;font-size: 1.3em">
-    <h1 style="margin: 0.2em 0; font-weight: normal">Little Virtual Computer</h1>
-    This is a simple simulated computer. Click 'run/pause' to
-    make it go, or load a different program with the program selector in the bottom left.
+
+<div class="header">
+    <h1>Little Virtual Computer</h1>
+    <p>A simple simulated computer. Click 'run/pause' to make it go, or load a different program with the program selector below.</p>
 </div>
-<div style="display: flex;">
-    <div style="width: 700px">
-        <div style="width: 600px; height: 600px">
+
+<div class="main-layout">
+    <div class="canvas-wrap">
+        <div class="screen-frame">
             <canvas id="canvas"></canvas>
         </div>
-        <div style="margin-top: 10px">
+        <div class="program-area">
             <label>
-                program:
+                program
                 <select id="programSelector" onchange="selectProgram()"></select>
                 <button id="loadProgramButton" onclick="loadProgramAndReset()">load program</button>
             </label>
             <textarea id="program" rows="18" cols="70" onchange="editProgramText()"
-                      onkeyup="editProgramText()" style="margin-top: 10px">
-        </textarea>
+                      onkeyup="editProgramText()"></textarea>
         </div>
     </div>
-    <div style="flex: 1">
-        <div style="height: 30px">
+
+    <div class="right-panel">
+        <div class="controls-bar">
             <button id="runButton" onclick="runStop()">run/pause</button>
             <button id="stepButton" onclick="stepOnce()">step</button>
             <button onclick="loadProgramAndReset()">reset</button>
-            <span id="running"></span>
+            <span id="running" class="status"></span>
         </div>
-        <label>slow-mo speed <input id="speed" type="range" min="-500" max="-1" value="-1"
-                                    onchange="setSpeed()"/></label>
-        <label>full speed <input id="full-speed" type="checkbox" checked onchange="setFullSpeed()"/></label>
-        <div id="debugger" style="width: 400px">
-            <div id="debuggerMessageArea" style="height: 20px"></div>
-            <label>program counter <input id="programCounter"/></label>
-            working memory (slots 0 - 999):
-            <textarea id="workingMemoryView" readonly rows="10" cols="40"></textarea>
-            program memory (slots 1000 - 1999):
-            <div id="programMemoryView"></div>
-            input memory (slots 2000 - 2051):
-            <textarea id="inputMemoryView" readonly rows="8" cols="40"></textarea>
-            video memory (slots 2100 - 2999):
-            <textarea id="videoMemoryView" readonly rows="10" cols="40"></textarea>
-            audio memory (slots 3000 - 3010):
-            <textarea id="audioMemoryView" readonly rows="10" cols="40"></textarea>
+
+        <div class="speed-controls">
+            <label>slow-mo speed <input id="speed" type="range" min="-500" max="-1" value="-1" onchange="setSpeed()"/></label>
+            <label>full speed <input id="full-speed" type="checkbox" checked onchange="setFullSpeed()"/></label>
+        </div>
+
+        <div id="debugger">
+            <div id="debuggerMessageArea"></div>
+
+            <div class="mem-section">
+                <label>program counter <input id="programCounter"/></label>
+            </div>
+
+            <div class="mem-section">
+                <div class="mem-title">working memory (slots 0 - 999)</div>
+                <textarea id="workingMemoryView" readonly rows="8" cols="40"></textarea>
+            </div>
+
+            <div class="mem-section">
+                <div class="mem-title">program memory (slots 1000 - 1999)</div>
+                <div id="programMemoryView"></div>
+            </div>
+
+            <div class="mem-section">
+                <div class="mem-title">input memory (slots 2000 - 2051)</div>
+                <textarea id="inputMemoryView" readonly rows="8" cols="40"></textarea>
+            </div>
+
+            <div class="mem-section">
+                <div class="mem-title">video memory (slots 2100 - 2999)</div>
+                <textarea id="videoMemoryView" readonly rows="8" cols="40"></textarea>
+            </div>
+
+            <div class="mem-section">
+                <div class="mem-title">audio memory (slots 3000 - 3010)</div>
+                <textarea id="audioMemoryView" readonly rows="8" cols="40"></textarea>
+            </div>
         </div>
     </div>
 </div>
+
 <script src="./programs.js"></script>
 <script type="module">
   import initComputer from './dist/computer.module.js'
@@ -101,3 +322,4 @@
 </script>
 
 </body>
+</html>
