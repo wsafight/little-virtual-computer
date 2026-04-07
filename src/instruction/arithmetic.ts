@@ -133,9 +133,9 @@ const modulo_constant: CPUInstructionProps = {
   store the result at the 'result' address`,
   operands: [['a', 'address'], ['b', 'constant'], ['result', 'address']],
   execute: (aAddress: number, b: number, resultAddress: number) => {
+    if (b === 0) throw new Error('tried to modulo by zero');
     const a = Memory.get(aAddress);
     const result = a % b;
-    if (b === 0) throw new Error('tried to modulo by zero');
     Memory.set(resultAddress, result);
   },
 }

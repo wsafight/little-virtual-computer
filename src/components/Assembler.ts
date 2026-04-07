@@ -102,7 +102,7 @@ export default class Assembler {
           programInstructions.push(instruction);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err.isException) throw err; // validation error
       // otherwise it must be a parsing/syntax error
       throw new Error(`Syntax error on program line ${i + 1}: '${line}'`);
@@ -118,7 +118,7 @@ export default class Assembler {
     // understands. Instead, it's a marker for the location of the next
     // instruction, which we can substitute for the actual location once we know
     // the memory locations in the assembled program which the labels refer to.
-    const labelAddresses = {};
+    const labelAddresses: Record<string, number> = {};
     let labelAddress = MemoryPosition.PROGRAM_MEMORY_START;
     for (let instruction of programInstructions) {
       if (instruction.name === 'label') {
@@ -130,7 +130,7 @@ export default class Assembler {
       }
     }
 
-    const defines = {};
+    const defines: Record<string, number> = {};
 
     // load instructions and operands into memory
     // 程序内存

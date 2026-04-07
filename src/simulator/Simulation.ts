@@ -70,7 +70,7 @@ export default class Simulation {
     try {
       this.computer.assembleAndLoadProgram(this.computer.parseProgramText(programText));
     } catch (err) {
-      alert(err.message);
+      alert(err instanceof Error ? err.message : String(err));
       console.error(err);
     }
 

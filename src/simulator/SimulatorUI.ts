@@ -2,7 +2,6 @@ import Simulation from "./Simulation";
 import { Computer } from "../interface";
 import MemoryPosition from "../components/memory/MemoryPosition";
 import domUtils from "../utils/dom";
-import padRight from "../utils/padRight";
 
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
@@ -167,11 +166,11 @@ export default class SimulatorUI {
 
     for (let i = MemoryPosition.PROGRAM_MEMORY_START; i < MemoryPosition.PROGRAM_MEMORY_END; i++) {
       const instruction = this.computer.getOpcodesToInstructions().get(this.computer.getMemory(i));
-      lines.push(`${padRight(i, 4)}: ${padRight(this.computer.getMemory(i), 8)} ${instruction || ''}`);
+      lines.push(`${String(i).padEnd(4)}: ${String(this.computer.getMemory(i)).padEnd(8)} ${instruction || ''}`);
       if (instruction) {
         const operands = this.computer.getInstructions()[instruction].operands;
         for (let j = 0; j < operands.length; j++) {
-          lines.push(`${padRight(i + 1 + j, 4)}: ${padRight(this.computer.getMemory(i + 1 + j), 8)}   ${operands[j][0]} (${operands[j][1]})`);
+          lines.push(`${String(i + 1 + j).padEnd(4)}: ${String(this.computer.getMemory(i + 1 + j)).padEnd(8)}   ${operands[j][0]} (${operands[j][1]})`);
         }
         i += operands.length;
       }
@@ -183,15 +182,15 @@ export default class SimulatorUI {
 
   static updateInputMemoryView() {
     domUtils.$TextArea('#inputMemoryView').textContent =
-      `${MemoryPosition.KEYCODE_0_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_0_ADDRESS), 8)} keycode 0
-${MemoryPosition.KEYCODE_1_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_1_ADDRESS), 8)} keycode 1
-${MemoryPosition.KEYCODE_2_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.KEYCODE_2_ADDRESS), 8)} keycode 2
-${MemoryPosition.MOUSE_X_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_X_ADDRESS), 8)} mouse x
-${MemoryPosition.MOUSE_Y_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_Y_ADDRESS), 8)} mouse y
-${MemoryPosition.MOUSE_PIXEL_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_PIXEL_ADDRESS), 8)} mouse pixel
-${MemoryPosition.MOUSE_BUTTON_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.MOUSE_BUTTON_ADDRESS), 8)} mouse button
-${MemoryPosition.RANDOM_NUMBER_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.RANDOM_NUMBER_ADDRESS), 8)} random number
-${MemoryPosition.CURRENT_TIME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.CURRENT_TIME_ADDRESS), 8)} current time`;
+      `${MemoryPosition.KEYCODE_0_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.KEYCODE_0_ADDRESS)).padEnd(8)} keycode 0
+${MemoryPosition.KEYCODE_1_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.KEYCODE_1_ADDRESS)).padEnd(8)} keycode 1
+${MemoryPosition.KEYCODE_2_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.KEYCODE_2_ADDRESS)).padEnd(8)} keycode 2
+${MemoryPosition.MOUSE_X_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.MOUSE_X_ADDRESS)).padEnd(8)} mouse x
+${MemoryPosition.MOUSE_Y_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.MOUSE_Y_ADDRESS)).padEnd(8)} mouse y
+${MemoryPosition.MOUSE_PIXEL_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.MOUSE_PIXEL_ADDRESS)).padEnd(8)} mouse pixel
+${MemoryPosition.MOUSE_BUTTON_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.MOUSE_BUTTON_ADDRESS)).padEnd(8)} mouse button
+${MemoryPosition.RANDOM_NUMBER_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.RANDOM_NUMBER_ADDRESS)).padEnd(8)} random number
+${MemoryPosition.CURRENT_TIME_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.CURRENT_TIME_ADDRESS)).padEnd(8)} current time`;
   }
 
   static updateVideoMemoryView() {
@@ -204,14 +203,14 @@ ${MemoryPosition.CURRENT_TIME_ADDRESS}: ${padRight(this.computer.getMemory(Memor
 
   static updateAudioMemoryView() {
     domUtils.$TextArea('#audioMemoryView').textContent =
-      `${MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS), 8)} audio ch1 wavetype
-${MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS), 8)} audio ch1 frequency
-${MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS), 8)} audio ch1 volume
-${MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS), 8)} audio ch2 wavetype
-${MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS), 8)} audio ch2 frequency
-${MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS), 8)} audio ch2 volume
-${MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS), 8)} audio ch3 wavetype
-${MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS), 8)} audio ch3 frequency
-${MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS}: ${padRight(this.computer.getMemory(MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS), 8)} audio ch3 volume`;
+      `${MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH1_WAVE_TYPE_ADDRESS)).padEnd(8)} audio ch1 wavetype
+${MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH1_FREQUENCY_ADDRESS)).padEnd(8)} audio ch1 frequency
+${MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH1_VOLUME_ADDRESS)).padEnd(8)} audio ch1 volume
+${MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH2_WAVE_TYPE_ADDRESS)).padEnd(8)} audio ch2 wavetype
+${MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH2_FREQUENCY_ADDRESS)).padEnd(8)} audio ch2 frequency
+${MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH2_VOLUME_ADDRESS)).padEnd(8)} audio ch2 volume
+${MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH3_WAVE_TYPE_ADDRESS)).padEnd(8)} audio ch3 wavetype
+${MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH3_FREQUENCY_ADDRESS)).padEnd(8)} audio ch3 frequency
+${MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS}: ${String(this.computer.getMemory(MemoryPosition.AUDIO_CH3_VOLUME_ADDRESS)).padEnd(8)} audio ch3 volume`;
   }
 }
