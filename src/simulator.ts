@@ -1,6 +1,6 @@
 import SimulatorUI from "./simulator/SimulatorUI";
 import Simulation from "./simulator/Simulation";
-import { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "./constant";
+import { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "./components/memory/MemoryPosition";
 import Audio from "./components/Audio";
 import { Computer } from "./interface";
 

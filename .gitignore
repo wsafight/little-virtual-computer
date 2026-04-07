@@ -8,8 +8,6 @@
 # testing
 /coverage
 
-# production
-
 # misc
 .idea
 .vscode

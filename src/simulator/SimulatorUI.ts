@@ -3,11 +3,16 @@ import { Computer } from "../interface";
 import MemoryPosition from "../components/memory/MemoryPosition";
 import domUtils from "../utils/dom";
 
+declare function t(key: string): string;
+
 export default class SimulatorUI {
   static selectedProgram: string = localStorage.getItem('selectedProgram') || 'RandomPixels'
   static loadedProgramText: string = ''
   static itemHeight: number = 14;
-  static lines: string[]
+  static lines: string[] = []
+
+  static workingMemoryBuf = new Array<string>(MemoryPosition.WORKING_MEMORY_END - MemoryPosition.WORKING_MEMORY_START)
+  static videoMemoryBuf = new Array<string>(MemoryPosition.VIDEO_MEMORY_END - MemoryPosition.VIDEO_MEMORY_START)
 
   static computer: Computer
   static programs: Record<string, string> = {}
@@ -100,37 +105,38 @@ export default class SimulatorUI {
     domUtils.$Input('#speed').value = String(-Simulation.delayBetweenCycles);
     domUtils.$('#debugger').classList.toggle('full-speed', runningAtFullSpeed);
     domUtils.$('#debuggerMessageArea').textContent = runningAtFullSpeed ?
-      'debug UI disabled when CPU.running at full speed' : '';
+      t('debugDisabled') : '';
   }
 
   static updateUI() {
     domUtils.$Input('#programCounter').value = String(this.computer.getProgramCounter());
     if (this.computer.isHalted()) {
-      domUtils.$('#running').textContent = 'halted';
+      domUtils.$('#running').textContent = t('halted');
       domUtils.$Button('#stepButton').disabled = true;
       domUtils.$Button('#runButton').disabled = true;
     } else {
-      domUtils.$('#running').textContent = this.computer.isRunning() ? 'running' : 'paused';
+      domUtils.$('#running').textContent = this.computer.isRunning() ? t('running') : t('paused');
       domUtils.$Button('#stepButton').disabled = false;
       domUtils.$Button('#runButton').disabled = false;
     }
-    this.updateWorkingMemoryView();
-    this.updateInputMemoryView();
-    this.updateVideoMemoryView();
-    this.updateAudioMemoryView();
+    const runningFullSpeed = this.computer.isRunning() && Simulation.delayBetweenCycles === 0;
+    if (!runningFullSpeed) {
+      this.updateWorkingMemoryView();
+      this.updateInputMemoryView();
+      this.updateVideoMemoryView();
+      this.updateAudioMemoryView();
+    }
     if (Simulation.delayBetweenCycles > 300 || !this.computer.isRunning()) {
-      if (typeof this.scrollToProgramLine == 'function') {
-        this.scrollToProgramLine(Math.max(0, this.computer.getProgramCounter() - MemoryPosition.PROGRAM_MEMORY_START - 3));
-      }
+      this.scrollToProgramLine(Math.max(0, this.computer.getProgramCounter() - MemoryPosition.PROGRAM_MEMORY_START - 3));
     }
   }
 
   static updateWorkingMemoryView() {
-    const lines = [];
+    const buf = this.workingMemoryBuf;
     for (let i = MemoryPosition.WORKING_MEMORY_START; i < MemoryPosition.WORKING_MEMORY_END; i++) {
-      lines.push(`${i}: ${this.computer.getMemory(i)}`);
+      buf[i] = `${i}: ${this.computer.getMemory(i)}`;
     }
-    domUtils.$TextArea('#workingMemoryView').textContent = lines.join('\n');
+    domUtils.$TextArea('#workingMemoryView').textContent = buf.join('\n');
   }
 
   static scrollToProgramLine(item: number) {
@@ -152,7 +158,7 @@ export default class SimulatorUI {
             return `
   <pre
     class="table-row"
-    style="height: ${this.itemHeight}px; background: ${current ? '#eee' : 'none'}"
+    style="height: ${this.itemHeight}px; background: ${current ? '#d6e8c4' : 'none'}"
   >${l}</pre>
             `;
           })
@@ -194,11 +200,11 @@ ${MemoryPosition.CURRENT_TIME_ADDRESS}: ${String(this.computer.getMemory(MemoryP
   }
 
   static updateVideoMemoryView() {
-    const lines = [];
+    const buf = this.videoMemoryBuf;
     for (let i = MemoryPosition.VIDEO_MEMORY_START; i < MemoryPosition.VIDEO_MEMORY_END; i++) {
-      lines.push(`${i}: ${this.computer.getMemory(i)}`);
+      buf[i - MemoryPosition.VIDEO_MEMORY_START] = `${i}: ${this.computer.getMemory(i)}`;
     }
-    domUtils.$TextArea('#videoMemoryView').textContent = lines.join('\n');
+    domUtils.$TextArea('#videoMemoryView').textContent = buf.join('\n');
   }
 
   static updateAudioMemoryView() {

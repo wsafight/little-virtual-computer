@@ -1,69 +1,55 @@
-import MemoryPosition from "./memory/MemoryPosition";
+import MemoryPosition, { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import { SCREEN_HEIGHT, SCREEN_PIXEL_SCALE, SCREEN_WIDTH } from "../constant";
-import notNull from "../utils/notNull";
 
-const COLOR_PALETTE: Record<string, [number, number, number]> = {
-  '0': [0, 0, 0], // Black
-  '1': [255, 255, 255], // White
-  '2': [255, 0, 0], // Red
-  '3': [0, 255, 0], // Lime
-  '4': [0, 0, 255], // Blue
-  '5': [255, 255, 0], // Yellow
-  '6': [0, 255, 255], // Cyan/Aqua
-  '7': [255, 0, 255], // Magenta/Fuchsia
-  '8': [192, 192, 192], // Silver
-  '9': [128, 128, 128], // Gray
-  '10': [128, 0, 0], // Maroon
-  '11': [128, 128, 0], // Olive
-  '12': [0, 128, 0], // Green
-  '13': [128, 0, 128], // Purple
-  '14': [0, 128, 128], // Teal
-  '15': [0, 0, 128], // Navy
-}
+// Pre-computed RGBA lookup table (16 colors x 4 channels)
+const COLOR_LUT = new Uint8Array([
+  0, 0, 0, 255,       // 0  Black
+  255, 255, 255, 255,  // 1  White
+  255, 0, 0, 255,      // 2  Red
+  0, 255, 0, 255,      // 3  Lime
+  0, 0, 255, 255,      // 4  Blue
+  255, 255, 0, 255,    // 5  Yellow
+  0, 255, 255, 255,    // 6  Cyan
+  255, 0, 255, 255,    // 7  Magenta
+  192, 192, 192, 255,  // 8  Silver
+  128, 128, 128, 255,  // 9  Gray
+  128, 0, 0, 255,      // 10 Maroon
+  128, 128, 0, 255,    // 11 Olive
+  0, 128, 0, 255,      // 12 Green
+  128, 0, 128, 255,    // 13 Purple
+  0, 128, 128, 255,    // 14 Teal
+  0, 0, 128, 255,      // 15 Navy
+]);
 
-// 显示器
 export default class Display {
-  // 宽度
   static readonly SCREEN_WIDTH = SCREEN_WIDTH
-  // 高度
   static readonly SCREEN_HEIGHT = SCREEN_HEIGHT
-  // 像素比例（一个像素点多大）
   static readonly SCREEN_PIXEL_SCALE = SCREEN_PIXEL_SCALE
 
   static imageData: ImageData | null
   static canvasCtx: CanvasRenderingContext2D | null
-
-  static getColor(pixelColorId: string, address: number) {
-    const color = COLOR_PALETTE[pixelColorId];
-    if (!color) {
-      throw new Error(`Invalid color code ${pixelColorId} at address ${address}`);
-    }
-    return color;
-  }
 
   static init(canvasCtx: CanvasRenderingContext2D) {
     Display.canvasCtx = canvasCtx;
     this.imageData = canvasCtx.createImageData(Display.SCREEN_WIDTH, Display.SCREEN_HEIGHT);
   }
 
-  // 绘制
   static drawScreen() {
-    const imageData = notNull(this.imageData);
-    const videoMemoryLength = MemoryPosition.VIDEO_MEMORY_END - MemoryPosition.VIDEO_MEMORY_START;
-    const pixelsRGBA = imageData!.data;
-    for (let i = 0; i < videoMemoryLength; i++) {
-      const pixelColorId: string = Memory.ram[MemoryPosition.VIDEO_MEMORY_START + i] as string;
-      // 程序启动的时获取 [0, 0, 0] 黑色
-      const colorRGB = this.getColor(pixelColorId || '0', MemoryPosition.VIDEO_MEMORY_START + i);
-      pixelsRGBA[i * 4] = colorRGB[0];
-      pixelsRGBA[i * 4 + 1] = colorRGB[1];
-      pixelsRGBA[i * 4 + 2] = colorRGB[2];
-      // 透明度
-      pixelsRGBA[i * 4 + 3] = 255;
+    const imageData = this.imageData!;
+    const pixelsRGBA = imageData.data;
+    const videoStart = MemoryPosition.VIDEO_MEMORY_START;
+    const videoLength = MemoryPosition.VIDEO_MEMORY_END - videoStart;
+    const ram = Memory.ram;
+
+    for (let i = 0; i < videoLength; i++) {
+      const lutOffset = (ram[videoStart + i] || 0) << 2; // * 4
+      const dst = i << 2;
+      pixelsRGBA[dst] = COLOR_LUT[lutOffset];
+      pixelsRGBA[dst + 1] = COLOR_LUT[lutOffset + 1];
+      pixelsRGBA[dst + 2] = COLOR_LUT[lutOffset + 2];
+      pixelsRGBA[dst + 3] = 255;
     }
 
-    const canvasCtx = notNull(this.canvasCtx);
-    canvasCtx!.putImageData(imageData!, 0, 0);
+    this.canvasCtx!.putImageData(imageData, 0, 0);
   }
 }

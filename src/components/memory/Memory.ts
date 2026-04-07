@@ -2,7 +2,7 @@ import {TOTAL_MEMORY_SIZE} from './MemoryPosition'
 
 export default class Memory {
   // 高速缓存
-  static ram: any[] = []
+  static ram: number[] = []
 
   // 内存中设置值
   static set(address: number, value: number) {

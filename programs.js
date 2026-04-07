@@ -1,4 +1,4 @@
-window.programs = {
+export const programs = {
   'Add':
     `
 define a 0

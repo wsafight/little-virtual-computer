@@ -2,7 +2,7 @@ import Memory from "./memory/Memory";
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 
-const FixedAudioContext: any = window.AudioContext || (window as any).webkitAudioContext
+const FixedAudioContext: typeof AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
 
 const  WAVE_TYPE: Record<string, OscillatorType> =  {
   '0': 'square',
@@ -11,10 +11,19 @@ const  WAVE_TYPE: Record<string, OscillatorType> =  {
   '3': 'sine',
 }
 
+interface AudioChannel {
+  state: { gain: number; oscillatorType: OscillatorType; frequency: number };
+  waveTypeAddr: number;
+  freqAddr: number;
+  volAddr: number;
+  gainNode: GainNode;
+  oscillatorNode: OscillatorNode;
+}
+
 export default class Audio {
   static readonly MAX_GAIN: number = 0.15
 
-  static audioChannels: any[] = []
+  static audioChannels: AudioChannel[] = []
 
   static audioCtx = new FixedAudioContext()
 

@@ -62,7 +62,6 @@ const domUtils = {
 
       rows.style.transform = `translateY(${offsetTop}px)`;
       rows.innerHTML = renderItems(start, end);
-      console.log('wsa-row', rows);
     });
 
     container.onscroll = renderRowsInView;

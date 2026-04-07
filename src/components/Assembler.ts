@@ -1,11 +1,13 @@
 import CPU from "./CPU";
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
-import { CPUInstructions } from "../interface";
+import { CPUInstructions, ProgramInstruction } from "../interface";
+
+class AssemblerValidationError extends Error {}
 
 // 汇编器
 export default class Assembler {
-  static instructionsLabelOperands: Map<any, any> = new Map()
+  static instructionsLabelOperands: Map<string, number> = new Map()
   static instructions: CPUInstructions = {}
 
   static initInstructionsLabelOperands() {
@@ -21,8 +23,8 @@ export default class Assembler {
     });
   }
 
-  static parseProgramText(programText: string): any[] {
-    const programInstructions = [];
+  static parseProgramText(programText: string): ProgramInstruction[] {
+    const programInstructions: ProgramInstruction[] = [];
 
     // 拆分行
     const lines = programText.split('\n');
@@ -32,7 +34,7 @@ export default class Assembler {
       for (i = 0; i < lines.length; i++) {
         line = lines[i];
         // 收集指令
-        const instruction: Record<string, any> = {name: '', operands: []};
+        const instruction: ProgramInstruction = {name: '', operands: []};
         let tokens: string[] = line.replace(/;.*$/, '') // strip comments
           .split(' ');
         // token  
@@ -87,13 +89,11 @@ export default class Assembler {
           const expectedOperands = this.instructions[instruction.name].operands;
           // 操作数据不等于 传入的数据，抛出异常
           if (instruction.operands.length !== expectedOperands.length) {
-            const error = new Error(
+            throw new AssemblerValidationError(
               `Wrong number of operands for instruction ${instruction.name}
   got ${instruction.operands.length}, expected ${expectedOperands.length}
   at line ${i + 1}: '${line}'`
             );
-            (error as any).isException = true;
-            throw error;
           }
         }
 
@@ -102,8 +102,8 @@ export default class Assembler {
           programInstructions.push(instruction);
         }
       }
-    } catch (err: any) {
-      if (err.isException) throw err; // validation error
+    } catch (err) {
+      if (err instanceof AssemblerValidationError) throw err;
       // otherwise it must be a parsing/syntax error
       throw new Error(`Syntax error on program line ${i + 1}: '${line}'`);
     }
@@ -113,7 +113,7 @@ export default class Assembler {
     return programInstructions;
   }
 
-  static assembleAndLoadProgram(programInstructions: any): void {
+  static assembleAndLoadProgram(programInstructions: ProgramInstruction[]): void {
     // 'label' is a special case – it's not really an instruction which the CPU
     // understands. Instead, it's a marker for the location of the next
     // instruction, which we can substitute for the actual location once we know
@@ -140,13 +140,13 @@ export default class Assembler {
         continue;
       }
       if (instruction.name === 'define') {
-        defines[instruction.operands[0]] = instruction.operands[1];
+        defines[instruction.operands[0] as string] = instruction.operands[1] as number;
         continue;
       }
 
       if (instruction.name === 'data') {
         for (let i = 0; i < instruction.operands.length; i++) {
-          Memory.ram[loadingAddress++] = instruction.operands[i];
+          Memory.ram[loadingAddress++] = instruction.operands[i] as number;
         }
         continue;
       }
@@ -166,7 +166,7 @@ export default class Assembler {
       if (this.instructionsLabelOperands.has(instruction.name)) {
         const labelOperandIndex = this.instructionsLabelOperands.get(instruction.name);
         if (typeof labelOperandIndex !== 'number') throw new Error('expected number');
-        const labelName = instruction.operands[labelOperandIndex];
+        const labelName = instruction.operands[labelOperandIndex] as string;
         const labelAddress = labelAddresses[labelName];
         if (!labelAddress) {
           throw new Error(`unknown label '${labelName}'`);
@@ -175,15 +175,16 @@ export default class Assembler {
       }
 
       for (let i = 0; i < operands.length; i++) {
-        let value = null;
+        let value: number;
         if (typeof operands[i] === 'string') {
-          if (operands[i] in defines) {
-            value = defines[operands[i]];
+          const name = operands[i] as string;
+          if (name in defines) {
+            value = defines[name];
           } else {
-            throw new Error(`'${operands[i]}' not defined`);
+            throw new Error(`'${name}' not defined`);
           }
         } else {
-          value = operands[i];
+          value = operands[i] as number;
         }
 
         Memory.ram[loadingAddress++] = value;

@@ -12,9 +12,9 @@ export default class CPU {
   static halted: boolean = false
 
   // 名称转 opCode
-  static instructionsToOpcodes = new Map()
+  static instructionsToOpcodes = new Map<string, number>()
   // opCode 转名称
-  static opcodesToInstructions = new Map()
+  static opcodesToInstructions = new Map<number, string>()
 
   // 指令集
   static instructions : CPUInstructions

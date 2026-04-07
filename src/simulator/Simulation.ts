@@ -66,7 +66,6 @@ export default class Simulation {
     this.computer.resetMemory()
 
     const programText = SimulatorUI.getProgramText();
-    console.log(programText)
     try {
       this.computer.assembleAndLoadProgram(this.computer.parseProgramText(programText));
     } catch (err) {

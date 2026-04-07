@@ -6,4 +6,4 @@
 
 我使用 TypeScript 和设计模式进一步拆分和简化了源代码。让源代码更具可读性以及可扩展性。
 
-网站是：https://jump_jump.gitee.io/little-virtual-computer/
+网站是： https://wsafight.github.io/little-virtual-computer/

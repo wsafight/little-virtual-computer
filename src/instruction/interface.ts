@@ -3,5 +3,5 @@ export interface CPUInstructionProps {
   opcode: number;
   description: string;
   operands: [string, string][],
-  execute: (...args: any[]) => void
+  execute: (...args: number[]) => void
 }
