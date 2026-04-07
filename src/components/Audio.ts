@@ -55,8 +55,8 @@ export default class Audio {
   }
 
   static updateAudio() {
-    this.audioChannels.forEach(channel => {
-      const frequency = (Memory.ram[channel.freqAddr] || 0) / 1000;
+    for (const channel of this.audioChannels) {
+      const frequency = Math.max(20, Math.min(20000, (Memory.ram[channel.freqAddr] || 0) / 1000));
       const gain = !CPU.running ? 0 : (Memory.ram[channel.volAddr] || 0) / 100 * this.MAX_GAIN;
       const oscillatorType = WAVE_TYPE[Memory.ram[channel.waveTypeAddr]] || WAVE_TYPE['0'];
 
@@ -73,7 +73,7 @@ export default class Audio {
         channel.oscillatorNode.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
         state.frequency = frequency;
       }
-    });
+    }
   }
 
   static init() {

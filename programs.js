@@ -1,7 +1,6 @@
 export const programs = {
   'Add':
-    `
-define a 0
+    `define a 0
 define b 1
 define result 2
 copy_to_from_constant a 4
@@ -11,8 +10,7 @@ add a b result
 `,
 
   'RandomPixels':
-    `
-define videoStartAddr 2100
+    `define videoStartAddr 2100
 define videoEndAddr 3000
 define randomNumberAddr 2050
 define numColors 16
@@ -68,8 +66,163 @@ copy_into_ptr_from lastClickedAddr currentColorAddr ; set pixel at mouse cursor 
 jump_to MainLoop
 `,
 
-  'ChocolateRain': `
-define accumulatorAddr 0
+  'BouncingBall':
+    `define videoBase 2100
+define screenWidth 30
+define maxIndex 29
+define currentTimeAddr 2051
+define frameMs 60
+define black 0
+define white 1
+define xAddr 0
+define yAddr 1
+define dxAddr 2
+define dyAddr 3
+define ptrAddr 4
+define tempAddr 5
+define compareAddr 6
+define lastFrameTimeAddr 7
+copy_to_from_constant xAddr 15
+copy_to_from_constant yAddr 10
+copy_to_from_constant dxAddr 1
+copy_to_from_constant dyAddr 1
+copy_to_from lastFrameTimeAddr currentTimeAddr
+MainLoop:
+subtract currentTimeAddr lastFrameTimeAddr tempAddr
+compare_constant tempAddr frameMs compareAddr
+branch_if_equal_constant compareAddr -1 MainLoop
+copy_to_from lastFrameTimeAddr currentTimeAddr
+multiply_constant yAddr screenWidth tempAddr
+add tempAddr xAddr tempAddr
+add_constant tempAddr videoBase tempAddr
+copy_to_from ptrAddr tempAddr
+copy_into_ptr_from ptrAddr black
+add xAddr dxAddr xAddr
+add yAddr dyAddr yAddr
+compare_constant xAddr 0 compareAddr
+branch_if_not_equal_constant compareAddr -1 CheckRightX
+copy_to_from_constant xAddr 0
+copy_to_from_constant dxAddr 1
+CheckRightX:
+compare_constant xAddr maxIndex compareAddr
+branch_if_not_equal_constant compareAddr 1 CheckLeftY
+copy_to_from_constant xAddr maxIndex
+copy_to_from_constant dxAddr -1
+CheckLeftY:
+compare_constant yAddr 0 compareAddr
+branch_if_not_equal_constant compareAddr -1 CheckRightY
+copy_to_from_constant yAddr 0
+copy_to_from_constant dyAddr 1
+CheckRightY:
+compare_constant yAddr maxIndex compareAddr
+branch_if_not_equal_constant compareAddr 1 DrawPixel
+copy_to_from_constant yAddr maxIndex
+copy_to_from_constant dyAddr -1
+DrawPixel:
+multiply_constant yAddr screenWidth tempAddr
+add tempAddr xAddr tempAddr
+add_constant tempAddr videoBase tempAddr
+copy_to_from ptrAddr tempAddr
+copy_into_ptr_from ptrAddr white
+jump_to MainLoop
+`,
+
+  'MiniPong':
+    `define videoBase 2100
+define screenWidth 30
+define maxIndex 29
+define currentTimeAddr 2051
+define frameMs 55
+define black 0
+define ballColor 2
+define paddleColor 3
+define paddleTop 10
+define paddleBottom 19
+define leftPaddleX 1
+define rightPaddleX 28
+define xAddr 0
+define yAddr 1
+define dxAddr 2
+define dyAddr 3
+define ptrAddr 4
+define tempAddr 5
+define compareAddr 6
+define lastFrameTimeAddr 7
+define drawYAddr 8
+copy_to_from_constant drawYAddr paddleTop
+DrawPaddles:
+multiply_constant drawYAddr screenWidth tempAddr
+add_constant tempAddr videoBase tempAddr
+add_constant tempAddr leftPaddleX tempAddr
+copy_to_from ptrAddr tempAddr
+copy_into_ptr_from ptrAddr paddleColor
+multiply_constant drawYAddr screenWidth tempAddr
+add_constant tempAddr videoBase tempAddr
+add_constant tempAddr rightPaddleX tempAddr
+copy_to_from ptrAddr tempAddr
+copy_into_ptr_from ptrAddr paddleColor
+add_constant drawYAddr 1 drawYAddr
+branch_if_not_equal_constant drawYAddr 20 DrawPaddles
+copy_to_from_constant xAddr 15
+copy_to_from_constant yAddr 15
+copy_to_from_constant dxAddr 1
+copy_to_from_constant dyAddr 1
+copy_to_from lastFrameTimeAddr currentTimeAddr
+GameLoop:
+subtract currentTimeAddr lastFrameTimeAddr tempAddr
+compare_constant tempAddr frameMs compareAddr
+branch_if_equal_constant compareAddr -1 GameLoop
+copy_to_from lastFrameTimeAddr currentTimeAddr
+multiply_constant yAddr screenWidth tempAddr
+add tempAddr xAddr tempAddr
+add_constant tempAddr videoBase tempAddr
+copy_to_from ptrAddr tempAddr
+copy_into_ptr_from ptrAddr black
+add xAddr dxAddr xAddr
+add yAddr dyAddr yAddr
+compare_constant yAddr 0 compareAddr
+branch_if_not_equal_constant compareAddr -1 CheckBottomWall
+copy_to_from_constant yAddr 0
+copy_to_from_constant dyAddr 1
+CheckBottomWall:
+compare_constant yAddr maxIndex compareAddr
+branch_if_not_equal_constant compareAddr 1 CheckLeftPaddle
+copy_to_from_constant yAddr maxIndex
+copy_to_from_constant dyAddr -1
+CheckLeftPaddle:
+compare_constant xAddr leftPaddleX compareAddr
+branch_if_not_equal_constant compareAddr 0 CheckRightPaddle
+compare_constant yAddr paddleTop compareAddr
+branch_if_equal_constant compareAddr -1 ResetBall
+compare_constant yAddr paddleBottom compareAddr
+branch_if_equal_constant compareAddr 1 ResetBall
+copy_to_from_constant xAddr 2
+copy_to_from_constant dxAddr 1
+CheckRightPaddle:
+compare_constant xAddr rightPaddleX compareAddr
+branch_if_not_equal_constant compareAddr 0 DrawBall
+compare_constant yAddr paddleTop compareAddr
+branch_if_equal_constant compareAddr -1 ResetBall
+compare_constant yAddr paddleBottom compareAddr
+branch_if_equal_constant compareAddr 1 ResetBall
+copy_to_from_constant xAddr 27
+copy_to_from_constant dxAddr -1
+DrawBall:
+multiply_constant yAddr screenWidth tempAddr
+add tempAddr xAddr tempAddr
+add_constant tempAddr videoBase tempAddr
+copy_to_from ptrAddr tempAddr
+copy_into_ptr_from ptrAddr ballColor
+jump_to GameLoop
+ResetBall:
+copy_to_from_constant xAddr 15
+copy_to_from_constant yAddr 15
+copy_to_from_constant dxAddr 1
+copy_to_from_constant dyAddr 1
+jump_to DrawBall
+`,
+
+  'ChocolateRain': `define accumulatorAddr 0
 define dataTempAddr 1
 define musicPlayheadPtr 2
 define startTimeAddr 3

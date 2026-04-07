@@ -29,8 +29,21 @@ export default function simulatorStart(computer: Computer,programs: Record<strin
     runStop: () => Simulation.runStop(),
     stepOnce: () => Simulation.stepOnce(),
     editProgramText: () => SimulatorUI.editProgramText(),
+    getProgramText: () => SimulatorUI.getProgramText(),
+    setProgramText: (text: string) => SimulatorUI.setProgramText(text),
+    undoProgramEdit: () => SimulatorUI.undoProgramEdit(),
+    redoProgramEdit: () => SimulatorUI.redoProgramEdit(),
     setSpeed: () => SimulatorUI.setSpeed(),
-    setFullSpeed: () => SimulatorUI.setFullSpeed()
+    setFullSpeed: () => SimulatorUI.setFullSpeed(),
+    clearBreakpoints: () => {
+      Simulation.clearBreakpoints();
+      SimulatorUI.updateProgramMemoryView();
+      SimulatorUI.updateBreakpointListView();
+    },
+    toggleBreakpoint: (addr: number) => {
+      Simulation.toggleBreakpoint(addr);
+      SimulatorUI.renderProgramMemoryView()();
+      SimulatorUI.updateBreakpointListView();
+    }
   }
 }
-

@@ -19,9 +19,8 @@ export default function initComputer(): Computer {
 
   return {
     resetMemory: () => {
-      for (let i = 0; i < TOTAL_MEMORY_SIZE; i++) {
-        Memory.ram[i] = 0;
-      }
+      Memory.ram.fill(0);
+      Display.fullRedrawNeeded = true;
     },
     getMemory: (index: number) => Memory.ram[index],
     // CPU action
@@ -34,10 +33,12 @@ export default function initComputer(): Computer {
 
     getOpcodesToInstructions: () => CPU.opcodesToInstructions,
     getInstructions: () => CPU.instructions,
+    getLastStepTrace: () => CPU.lastStepTrace,
 
 
     updateAudio: () => Audio.updateAudio(),
     drawScreen: () => Display.drawScreen(),
+    markVideoWrites: (addresses: number[]) => Display.markVideoWrites(addresses),
     parseProgramText: (code: string) => Assembler.parseProgramText(code),
     assembleAndLoadProgram: (program) => Assembler.assembleAndLoadProgram(program)
   }

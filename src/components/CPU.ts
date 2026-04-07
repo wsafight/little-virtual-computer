@@ -1,7 +1,7 @@
 import MemoryPosition from "./memory/MemoryPosition";
 import Memory from "./memory/Memory";
 import Input from "./Input";
-import { CPUInstructions } from "../interface";
+import { CPUInstructions, StepTrace } from "../interface";
 
 export default class CPU {
   // 指令了当前执行的 
@@ -18,37 +18,42 @@ export default class CPU {
 
   // 指令集
   static instructions : CPUInstructions
+  static lastStepTrace: StepTrace = { reads: [], writes: [] }
 
 
   static init(instructions: CPUInstructions) {
     this.instructions = instructions
-    Object.keys(instructions).forEach((instructionName: string) => {
-      const opcode = instructions[instructionName].opcode;
-      this.instructionsToOpcodes.set(instructionName, opcode);
-      this.opcodesToInstructions.set(opcode, instructionName);
-    });
+    for (const [name, instruction] of Object.entries(instructions)) {
+      this.instructionsToOpcodes.set(name, instruction.opcode);
+      this.opcodesToInstructions.set(instruction.opcode, name);
+    }
   }
 
   static step() {
-    Input.updateInputs();
-    const opcode = this.advanceProgramCounter();
-    const instructionName = this.opcodesToInstructions.get(opcode);
-    // 异常
-    if (!instructionName) {
-      throw new Error(`Unknown opcode '${opcode}'`);
-    }
+    Memory.beginTrace();
+    try {
+      Input.updateInputs();
+      const opcode = this.advanceProgramCounter();
+      const instructionName = this.opcodesToInstructions.get(opcode);
+      // 异常
+      if (!instructionName) {
+        throw new Error(`Unknown opcode '${opcode}'`);
+      }
 
-    // read as many values from memory as the instruction takes as operands and
-    // execute the instruction with those operands
-    
-    // 获取操作指令集
-    const operands = this.instructions[instructionName].operands.map(() =>
-      // 继续获取
-      this.advanceProgramCounter()
-    );
-    
-    // 执行命令
-    this.instructions[instructionName].execute.apply(null, operands);
+      // read as many values from memory as the instruction takes as operands and
+      // execute the instruction with those operands
+
+      // 获取操作指令集
+      const operands = this.instructions[instructionName].operands.map(() =>
+        // 继续获取
+        this.advanceProgramCounter()
+      );
+
+      // 执行命令
+      this.instructions[instructionName].execute.apply(null, operands);
+    } finally {
+      this.lastStepTrace = Memory.endTrace();
+    }
   }
 
   // 执行程序

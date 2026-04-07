@@ -5,13 +5,40 @@
     <style type="text/css">
         *, *::before, *::after { box-sizing: border-box; }
 
+        :root {
+            --bg: #f4f4f2;
+            --surface: #ffffff;
+            --surface2: #f0f0ee;
+            --surface3: #f8f8f7;
+            --border: #e4e4e0;
+            --border-focus: #5b6af0;
+            --text: #1a1a1a;
+            --text-muted: #8c8c8c;
+            --text-dim: #555555;
+            --accent: #5b6af0;
+            --accent-dark: #4a58e0;
+            --accent-bg: rgba(91,106,240,0.08);
+            --danger: #e5534b;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+            --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --mono-font: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+
         body {
             margin: 0;
-            padding: 20px;
+            padding: 16px 20px;
             font-size: 13px;
-            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-            background: #f5f3ef;
-            color: #4a4a48;
+            font-family: var(--ui-font);
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            gap: 12px;
         }
 
         label { display: block; }
@@ -24,247 +51,422 @@
 
         textarea {
             display: block;
-            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-            background: #faf9f7;
-            color: #5a5a58;
-            border: 1px solid #ddd8d0;
-            border-radius: 6px;
-            padding: 8px;
+            font-family: var(--mono-font);
+            background: var(--surface3);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
             resize: vertical;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            line-height: 1.6;
         }
-
-        textarea:focus { outline: 1px solid #8fae6e; border-color: #8fae6e; }
+        textarea:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-bg);
+        }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #eae7e0 0%, #e4e0d8 100%);
-            border: 1px solid #ddd8d0;
-            border-radius: 10px;
-            padding: 20px 24px;
-            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
         }
         .header h1 {
-            margin: 0 0 6px;
+            margin: 0;
             font-weight: 600;
-            font-size: 1.6em;
-            color: #3a3a38;
-            letter-spacing: -0.5px;
+            font-size: 14px;
+            color: var(--text);
+            letter-spacing: -0.2px;
+            white-space: nowrap;
         }
         .header p {
             margin: 0;
-            color: #8a8a85;
-            font-size: 0.95em;
+            color: var(--text-muted);
+            font-size: 12px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* Main layout */
         .main-layout {
             display: flex;
-            gap: 20px;
-            align-items: flex-start;
+            gap: 14px;
+            align-items: stretch;
+            flex: 1;
+            min-height: 0;
         }
 
         /* Canvas area */
         .canvas-wrap {
-            flex-shrink: 0;
+            flex: 0 0 auto;
+            width: 720px;
+            overflow: auto;
+            max-height: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         .screen-frame {
-            width: 600px;
-            height: 600px;
-            border-radius: 8px;
+            width: 720px;
+            height: 720px;
+            max-width: 100%;
+            aspect-ratio: 1;
+            border-radius: var(--radius);
             overflow: hidden;
-            border: 2px solid #ddd8d0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
             background: #000;
+            flex-shrink: 0;
+        }
+        .screen-frame canvas {
+            display: block;
         }
 
         /* Program editor */
-        .program-area { margin-top: 16px; }
-        .program-area label {
+        .program-area { display: flex; flex-direction: column; gap: 8px; }
+        .program-area > label {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
-            color: #8a8a85;
-            font-size: 0.9em;
+            color: var(--text-muted);
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.7px;
+            font-weight: 600;
         }
         #program {
             width: 100%;
-            min-height: 280px;
-            margin-top: 8px;
+            min-height: 240px;
+            font-family: var(--mono-font);
+        }
+        #program.dragging {
+            border-color: var(--border-focus);
+            background: #eef0fd;
+            box-shadow: 0 0 0 3px var(--accent-bg);
+        }
+        .program-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .program-toolbar button {
+            padding: 4px 10px;
+            font-size: 12px;
         }
 
         select {
-            background: #faf9f7;
-            color: #4a4a48;
-            border: 1px solid #ddd8d0;
-            border-radius: 4px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
             padding: 4px 8px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            font-family: var(--ui-font);
+        }
+        select:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-bg);
         }
 
         /* Buttons */
         button {
-            background: #eae7e0;
-            color: #4a4a48;
-            border: 1px solid #ddd8d0;
-            border-radius: 6px;
-            padding: 6px 14px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 5px 12px;
             cursor: pointer;
-            transition: background 0.15s, border-color 0.15s;
+            transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+            font-weight: 500;
+            font-family: var(--ui-font);
         }
-        button:hover { background: #ddd8d0; border-color: #8fae6e; }
-        button:active { background: #d0cbc2; }
-        button:disabled { opacity: 0.4; cursor: default; }
+        button:hover {
+            background: var(--surface2);
+            border-color: #d0d0cc;
+            box-shadow: var(--shadow-sm);
+        }
+        button:active {
+            background: var(--surface2);
+            box-shadow: none;
+        }
+        button:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
 
         /* Right panel */
         .right-panel {
             flex: 1;
-            min-width: 380px;
+            min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
+            min-height: 0;
+            overflow: auto;
+            max-height: 100%;
+            padding-right: 2px;
         }
 
         /* Controls bar */
         .controls-bar {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            background: #eae7e0;
-            border: 1px solid #ddd8d0;
-            border-radius: 8px;
+            gap: 6px;
+            padding: 9px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+        }
+        .controls-bar .sep {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+            margin: 0 4px;
         }
         .controls-bar .status {
             margin-left: auto;
-            font-size: 0.85em;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #6a9e4a;
+            color: var(--accent);
+            font-weight: 600;
         }
 
         /* Speed controls */
         .speed-controls {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 8px 14px;
-            background: #eae7e0;
-            border: 1px solid #ddd8d0;
-            border-radius: 8px;
-            font-size: 0.9em;
-            color: #8a8a85;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
         }
-        .speed-controls label { display: flex; align-items: center; gap: 6px; }
-        input[type="range"] { accent-color: #8fae6e; }
-        input[type="checkbox"] { accent-color: #8fae6e; }
+        .speed-controls label { display: flex; align-items: center; gap: 5px; }
+        input[type="range"] { accent-color: var(--accent); width: 80px; }
+        input[type="checkbox"] { accent-color: var(--accent); }
 
         /* Debugger / memory panel */
         #debugger {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
         }
 
-        #debugger.full-speed, #debugger.full-speed input, #debugger.full-speed textarea {
-            background: #eeebe5;
-            color: #bbb;
+        #debugger.full-speed {
+            opacity: 0.6;
+            pointer-events: none;
         }
-        #debugger.full-speed .mem-section { border-color: #e0ddd6; }
+        #debugger.full-speed .mem-section {
+            background: var(--surface2);
+        }
 
         #debuggerMessageArea {
-            font-weight: bold;
-            color: #c47a6a;
-            min-height: 18px;
-            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--danger);
+            min-height: 16px;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+        #traceLegend {
+            color: var(--text-muted);
+            font-size: 11px;
+            padding: 0 2px;
+            font-family: var(--mono-font);
         }
 
         .mem-section {
-            background: #eae7e0;
-            border: 1px solid #ddd8d0;
-            border-radius: 8px;
-            padding: 10px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 11px 13px;
+            box-shadow: var(--shadow-sm);
         }
         .mem-section .mem-title {
-            font-size: 0.8em;
+            font-size: 10.5px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #8a8a85;
-            margin-bottom: 6px;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
         }
         .mem-section label {
             display: flex;
             align-items: center;
-            gap: 6px;
-            color: #8a8a85;
-            font-size: 0.85em;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
         }
         .mem-section input[type="text"], .mem-section input:not([type]) {
-            background: #faf9f7;
-            border: 1px solid #ddd8d0;
-            border-radius: 4px;
-            padding: 3px 8px;
-            color: #5a5a58;
-            width: 80px;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 4px 8px;
+            color: var(--text-dim);
+            width: 90px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            font-family: var(--mono-font);
+        }
+        .mem-section input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-bg);
         }
         .mem-section textarea {
             width: 100%;
-            font-size: 12px;
+            font-size: 11px;
+            line-height: 1.65;
+            background: var(--surface3);
         }
 
         #programMemoryView {
             width: 100%;
-            border: 1px solid #ddd8d0;
-            border-radius: 6px;
-            background: #faf9f7;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface3);
         }
 
         .table-row {
-            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-            font-size: 12px;
+            font-family: var(--mono-font);
+            font-size: 11px;
             margin: 0;
-            padding: 0 6px;
-            color: #5a5a58;
+            padding: 2px 8px;
+            color: var(--text-dim);
+            line-height: 1.65;
         }
 
         /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f0ede8; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb { background: #d0cbc2; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #bbb6ad; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b0aba2; }
+
+        /* Instruction docs dialog */
+        .docs-open-button {
+            padding: 4px 11px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .instruction-dialog {
+            width: min(1000px, 94vw);
+            max-height: 88vh;
+            margin: auto;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface);
+            color: var(--text);
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .instruction-dialog::backdrop {
+            background: rgba(10, 10, 10, 0.45);
+            backdrop-filter: blur(6px);
+        }
+        .instruction-dialog-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface3);
+            border-radius: 14px 14px 0 0;
+        }
+        .instruction-dialog-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+        .instruction-dialog-content {
+            padding: 14px 18px 18px;
+            max-height: calc(88vh - 56px);
+            overflow: auto;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+        .instruction-dialog-content table { width: 100%; border-collapse: collapse; }
+        .instruction-dialog-content th {
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .instruction-dialog-content td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .instruction-dialog-content tr:hover td { background: var(--accent-bg); }
+
+        #breakpointList {
+            margin-top: 7px;
+            line-height: 1.65;
+            font-size: 11px;
+            color: var(--text-dim);
+            word-break: break-word;
+            font-family: var(--mono-font);
+        }
+        .breakpoint-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
 
         /* Language switcher */
         .lang-switch {
-            position: absolute;
-            top: 24px;
-            right: 24px;
             display: flex;
-            gap: 4px;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+            flex-shrink: 0;
         }
         .lang-switch button {
             padding: 3px 10px;
             font-size: 12px;
-            border-radius: 4px;
         }
         .lang-switch button.active {
-            background: #8fae6e;
+            background: var(--accent);
             color: #fff;
-            border-color: #7a9a5e;
+            border-color: var(--accent-dark);
+            box-shadow: 0 1px 4px rgba(91,106,240,0.3);
+        }
+
+        @media (max-width: 1200px) {
+            body { height: auto; overflow: auto; }
+            .header p { display: none; }
+            .main-layout { flex-direction: column; overflow: visible; }
+            .canvas-wrap { width: 100%; max-height: none; overflow: visible; }
+            .screen-frame { width: 100%; height: auto; aspect-ratio: 1; max-width: none; }
+            .right-panel { width: 100%; min-width: 0; max-width: none; max-height: none; overflow: visible; padding-right: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="header" style="position: relative;">
+<div class="header">
     <h1 data-i18n="title">Little Virtual Computer</h1>
     <p data-i18n="subtitle">A simple simulated computer. Click 'run/pause' to make it go, or load a different program with the program selector below.</p>
     <div class="lang-switch">
-        <a href="https://github.com/wsafight/little-virtual-computer" target="_blank" rel="noopener" style="display:flex;align-items:center;margin-right:8px;color:#4a4a48;" title="GitHub">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <button class="docs-open-button" onclick="openInstructionDialog()" data-i18n="instructionDocs">instruction reference</button>
+        <a href="https://github.com/wsafight/little-virtual-computer" target="_blank" rel="noopener" style="display:flex;align-items:center;color:var(--text-muted);" title="GitHub">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         </a>
-        <button onclick="switchLang('en')">EN</button>
-        <button onclick="switchLang('zh')">ZH</button>
+        <button data-lang="en" onclick="switchLang('en')">EN</button>
+        <button data-lang="zh" onclick="switchLang('zh')">ZH</button>
     </div>
 </div>
 
@@ -279,7 +481,14 @@
                 <select id="programSelector" onchange="selectProgram()"></select>
                 <button id="loadProgramButton" onclick="loadProgramAndReset()" data-i18n="loadProgram">load program</button>
             </label>
-            <textarea id="program" rows="18" cols="70" onchange="editProgramText()"
+            <div class="program-toolbar">
+                <button id="importButton" onclick="triggerProgramImport()" data-i18n="importProgram">import .asm</button>
+                <button id="exportButton" onclick="exportProgram()" data-i18n="exportProgram">export .asm</button>
+                <button id="undoButton" onclick="undoProgram()" data-i18n="undo">undo</button>
+                <button id="redoButton" onclick="redoProgram()" data-i18n="redo">redo</button>
+            </div>
+            <input id="programFileInput" type="file" accept=".asm,.txt,text/plain" style="display:none" onchange="handleProgramFileInput(event)" />
+            <textarea id="program" rows="12" cols="70" onchange="editProgramText()"
                       onkeyup="editProgramText()"></textarea>
         </div>
     </div>
@@ -289,19 +498,28 @@
             <button id="runButton" onclick="runStop()" data-i18n="runPause">run/pause</button>
             <button id="stepButton" onclick="stepOnce()" data-i18n="step">step</button>
             <button onclick="loadProgramAndReset()" data-i18n="reset">reset</button>
+            <div class="sep"></div>
+            <div class="speed-controls">
+                <label><span data-i18n="slowMo">slow-mo speed</span> <input id="speed" type="range" min="-500" max="-1" value="-1" onchange="setSpeed()"/></label>
+                <label><span data-i18n="fullSpeed">full speed</span> <input id="full-speed" type="checkbox" checked onchange="setFullSpeed()"/></label>
+            </div>
             <span id="running" class="status"></span>
-        </div>
-
-        <div class="speed-controls">
-            <label><span data-i18n="slowMo">slow-mo speed</span> <input id="speed" type="range" min="-500" max="-1" value="-1" onchange="setSpeed()"/></label>
-            <label><span data-i18n="fullSpeed">full speed</span> <input id="full-speed" type="checkbox" checked onchange="setFullSpeed()"/></label>
         </div>
 
         <div id="debugger">
             <div id="debuggerMessageArea"></div>
+            <div id="traceLegend" data-i18n="traceLegend">R = read, W = write (current instruction)</div>
 
             <div class="mem-section">
                 <label><span data-i18n="programCounter">program counter</span> <input id="programCounter"/></label>
+            </div>
+
+            <div class="mem-section">
+                <div class="mem-title" data-i18n="breakpoints">breakpoints</div>
+                <div class="breakpoint-actions">
+                    <button id="clearBreakpointsButton" onclick="clearBreakpointsUI()" data-i18n="clearBreakpoints">clear breakpoints</button>
+                </div>
+                <div id="breakpointList"></div>
             </div>
 
             <div class="mem-section">
@@ -332,15 +550,47 @@
     </div>
 </div>
 
+<dialog id="instructionDialog" class="instruction-dialog">
+    <div class="instruction-dialog-header">
+        <div class="instruction-dialog-title" data-i18n="instructionDocs">instruction reference</div>
+        <button onclick="closeInstructionDialog()" data-i18n="close">close</button>
+    </div>
+    <div class="instruction-dialog-content">
+        <table>
+            <thead>
+            <tr>
+                <th data-i18n="docsInstruction">instruction</th>
+                <th data-i18n="docsOpcode">opcode</th>
+                <th data-i18n="docsOperands">operands</th>
+                <th data-i18n="docsDescription">description</th>
+            </tr>
+            </thead>
+            <tbody id="instructionDocsBody"></tbody>
+        </table>
+    </div>
+</dialog>
+
 <script>
 const i18n = {
   en: {
     title: 'Little Virtual Computer',
     subtitle: "A simple simulated computer. Click 'run/pause' to make it go, or load a different program with the program selector below.",
     program: 'program', loadProgram: 'load program',
+    importProgram: 'import .asm', exportProgram: 'export .asm',
+    undo: 'undo', redo: 'redo',
     runPause: 'run/pause', step: 'step', reset: 'reset',
     slowMo: 'slow-mo speed', fullSpeed: 'full speed',
     programCounter: 'program counter',
+    breakpoints: 'breakpoints',
+    clearBreakpoints: 'clear breakpoints',
+    noBreakpoints: 'none',
+    traceLegend: 'R = read, W = write (current instruction)',
+    instructionDocs: 'instruction reference',
+    close: 'close',
+    docsInstruction: 'instruction',
+    docsOpcode: 'opcode',
+    docsOperands: 'operands',
+    docsDescription: 'description',
     workingMemory: 'working memory (slots 0 - 999)',
     programMemory: 'program memory (slots 1000 - 1999)',
     inputMemory: 'input memory (slots 2000 - 2051)',
@@ -353,9 +603,21 @@ const i18n = {
     title: '小型虚拟计算机',
     subtitle: '一个简单的模拟计算机。点击"运行/暂停"启动，或在下方选择并加载不同的程序。',
     program: '程序', loadProgram: '加载程序',
+    importProgram: '导入 .asm', exportProgram: '导出 .asm',
+    undo: '撤销', redo: '重做',
     runPause: '运行/暂停', step: '单步', reset: '重置',
     slowMo: '慢放速度', fullSpeed: '全速',
     programCounter: '程序计数器',
+    breakpoints: '断点',
+    clearBreakpoints: '清空断点',
+    noBreakpoints: '无',
+    traceLegend: 'R = 读内存, W = 写内存（当前指令）',
+    instructionDocs: '指令参考',
+    close: '关闭',
+    docsInstruction: '指令',
+    docsOpcode: '操作码',
+    docsOperands: '操作数',
+    docsDescription: '说明',
     workingMemory: '工作内存 (槽位 0 - 999)',
     programMemory: '程序内存 (槽位 1000 - 1999)',
     inputMemory: '输入内存 (槽位 2000 - 2051)',
@@ -371,8 +633,8 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.dataset.i18n);
   });
-  document.querySelectorAll('.lang-switch button').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.toLowerCase() === currentLang);
+  document.querySelectorAll('.lang-switch button[data-lang]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
   });
   document.title = t('title');
 }
@@ -381,7 +643,124 @@ function switchLang(lang) {
   localStorage.setItem('lang', lang);
   applyLang();
 }
+
+function setProgramTextFromExternal(text) {
+  if (typeof window.setProgramText === 'function') {
+    window.setProgramText(String(text || ''));
+  }
+}
+
+function triggerProgramImport() {
+  const input = document.getElementById('programFileInput');
+  if (input) input.click();
+}
+
+function handleProgramFileInput(event) {
+  const input = event.target;
+  if (!input || !input.files || input.files.length === 0) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = () => setProgramTextFromExternal(reader.result || '');
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function exportProgram() {
+  const text = typeof window.getProgramText === 'function' ? window.getProgramText() : '';
+  const selector = document.getElementById('programSelector');
+  const selected = selector ? selector.value : 'program';
+  const safeName = (selected || 'program').replace(/[^a-z0-9_-]+/gi, '_');
+  const blob = new Blob([text || ''], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${safeName}.asm`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+}
+
+function undoProgram() {
+  if (typeof window.undoProgramEdit === 'function') window.undoProgramEdit();
+}
+
+function redoProgram() {
+  if (typeof window.redoProgramEdit === 'function') window.redoProgramEdit();
+}
+
+function clearBreakpointsUI() {
+  if (typeof window.clearBreakpoints === 'function') window.clearBreakpoints();
+}
+
+function openInstructionDialog() {
+  const dialog = document.getElementById('instructionDialog');
+  if (!dialog) return;
+  if (typeof dialog.showModal === 'function') {
+    if (!dialog.open) dialog.showModal();
+  } else {
+    dialog.setAttribute('open', 'open');
+  }
+}
+
+function closeInstructionDialog() {
+  const dialog = document.getElementById('instructionDialog');
+  if (!dialog) return;
+  if (typeof dialog.close === 'function') {
+    if (dialog.open) dialog.close();
+  } else {
+    dialog.removeAttribute('open');
+  }
+}
+
+function initInstructionDialog() {
+  const dialog = document.getElementById('instructionDialog');
+  if (!dialog) return;
+  dialog.addEventListener('click', (event) => {
+    const rect = dialog.getBoundingClientRect();
+    const inDialog =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+    if (!inDialog) {
+      closeInstructionDialog();
+    }
+  });
+}
+
+function initProgramDropZone() {
+  const programEl = document.getElementById('program');
+  if (!programEl) return;
+
+  const preventDefaults = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+    programEl.addEventListener(eventName, preventDefaults);
+  });
+
+  ['dragenter', 'dragover'].forEach((eventName) => {
+    programEl.addEventListener(eventName, () => programEl.classList.add('dragging'));
+  });
+
+  ['dragleave', 'drop'].forEach((eventName) => {
+    programEl.addEventListener(eventName, () => programEl.classList.remove('dragging'));
+  });
+
+  programEl.addEventListener('drop', (event) => {
+    const files = event.dataTransfer && event.dataTransfer.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = () => setProgramTextFromExternal(reader.result || '');
+    reader.readAsText(file);
+  });
+}
+
 applyLang();
+initInstructionDialog();
 </script>
 
 <script type="module">
@@ -395,8 +774,15 @@ applyLang();
   window.runStop = action.runStop
   window.stepOnce = action.stepOnce
   window.editProgramText = action.editProgramText
+  window.getProgramText = action.getProgramText
+  window.setProgramText = action.setProgramText
+  window.undoProgramEdit = action.undoProgramEdit
+  window.redoProgramEdit = action.redoProgramEdit
   window.setSpeed = action.setSpeed
   window.setFullSpeed = action.setFullSpeed
+  window.clearBreakpoints = action.clearBreakpoints
+  window.toggleBreakpoint = action.toggleBreakpoint
+  initProgramDropZone()
 </script>
 
 </body>

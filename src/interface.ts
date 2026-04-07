@@ -7,6 +7,11 @@ export interface ProgramInstruction {
   operands: (string | number)[];
 }
 
+export interface StepTrace {
+  reads: number[];
+  writes: number[];
+}
+
 export interface Computer {
   resetMemory: () => void;
   getMemory: (index: number) => number;
@@ -18,8 +23,10 @@ export interface Computer {
   step: () => void;
   getOpcodesToInstructions: () => Map<number, string>,
   getInstructions: () => CPUInstructions,
+  getLastStepTrace: () => StepTrace,
   updateAudio: () => void;
   drawScreen: () => void;
+  markVideoWrites: (addresses: number[]) => void;
   parseProgramText: (code: string) => ProgramInstruction[];
   assembleAndLoadProgram: (ast: ProgramInstruction[]) => void;
 }

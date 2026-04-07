@@ -25,31 +25,77 @@ export default class Display {
   static readonly SCREEN_WIDTH = SCREEN_WIDTH
   static readonly SCREEN_HEIGHT = SCREEN_HEIGHT
   static readonly SCREEN_PIXEL_SCALE = SCREEN_PIXEL_SCALE
+  static readonly PIXEL_FLASH_FRAMES = 3
 
   static imageData: ImageData | null
   static canvasCtx: CanvasRenderingContext2D | null
+  static flashPixels: Map<number, number> = new Map()
+  static dirtyPixels: Set<number> = new Set()
+  static fullRedrawNeeded: boolean = true
 
   static init(canvasCtx: CanvasRenderingContext2D) {
     Display.canvasCtx = canvasCtx;
     this.imageData = canvasCtx.createImageData(Display.SCREEN_WIDTH, Display.SCREEN_HEIGHT);
+    this.fullRedrawNeeded = true;
   }
 
   static drawScreen() {
     const imageData = this.imageData!;
     const pixelsRGBA = imageData.data;
     const videoStart = MemoryPosition.VIDEO_MEMORY_START;
-    const videoLength = MemoryPosition.VIDEO_MEMORY_END - videoStart;
     const ram = Memory.ram;
 
-    for (let i = 0; i < videoLength; i++) {
-      const lutOffset = (ram[videoStart + i] || 0) << 2; // * 4
-      const dst = i << 2;
-      pixelsRGBA[dst] = COLOR_LUT[lutOffset];
-      pixelsRGBA[dst + 1] = COLOR_LUT[lutOffset + 1];
-      pixelsRGBA[dst + 2] = COLOR_LUT[lutOffset + 2];
-      pixelsRGBA[dst + 3] = 255;
+    if (this.fullRedrawNeeded) {
+      const videoLength = MemoryPosition.VIDEO_MEMORY_END - videoStart;
+      for (let i = 0; i < videoLength; i++) {
+        const lutOffset = (ram[videoStart + i] || 0) << 2;
+        const dst = i << 2;
+        pixelsRGBA[dst] = COLOR_LUT[lutOffset];
+        pixelsRGBA[dst + 1] = COLOR_LUT[lutOffset + 1];
+        pixelsRGBA[dst + 2] = COLOR_LUT[lutOffset + 2];
+        pixelsRGBA[dst + 3] = 255;
+      }
+      this.fullRedrawNeeded = false;
+    } else {
+      for (const i of this.dirtyPixels) {
+        const lutOffset = (ram[videoStart + i] || 0) << 2;
+        const dst = i << 2;
+        pixelsRGBA[dst] = COLOR_LUT[lutOffset];
+        pixelsRGBA[dst + 1] = COLOR_LUT[lutOffset + 1];
+        pixelsRGBA[dst + 2] = COLOR_LUT[lutOffset + 2];
+        pixelsRGBA[dst + 3] = 255;
+      }
     }
+    this.dirtyPixels.clear();
 
     this.canvasCtx!.putImageData(imageData, 0, 0);
+    this.drawFlashes();
+  }
+
+  static markVideoWrites(addresses: number[]) {
+    const start = MemoryPosition.VIDEO_MEMORY_START;
+    const end = MemoryPosition.VIDEO_MEMORY_END;
+    for (const address of addresses) {
+      if (address < start || address >= end) continue;
+      const pixelIndex = address - start;
+      this.dirtyPixels.add(pixelIndex);
+      this.flashPixels.set(pixelIndex, this.PIXEL_FLASH_FRAMES);
+    }
+  }
+
+  static drawFlashes() {
+    if (this.flashPixels.size === 0 || !this.canvasCtx) return;
+    for (const [pixelIndex, framesLeft] of this.flashPixels) {
+      const x = pixelIndex % Display.SCREEN_WIDTH;
+      const y = Math.floor(pixelIndex / Display.SCREEN_WIDTH);
+      const alpha = framesLeft / this.PIXEL_FLASH_FRAMES;
+      this.canvasCtx.fillStyle = `rgba(255,255,255,${(alpha * 0.7).toFixed(2)})`;
+      this.canvasCtx.fillRect(x, y, 1, 1);
+      if (framesLeft <= 1) {
+        this.flashPixels.delete(pixelIndex);
+      } else {
+        this.flashPixels.set(pixelIndex, framesLeft - 1);
+      }
+    }
   }
 }

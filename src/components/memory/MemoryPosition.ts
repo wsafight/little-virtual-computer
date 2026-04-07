@@ -2,7 +2,7 @@ export const TOTAL_MEMORY_SIZE = 3100
 
 export const SCREEN_WIDTH = 30
 export const SCREEN_HEIGHT = 30
-export const SCREEN_PIXEL_SCALE = 20
+export const SCREEN_PIXEL_SCALE = 24
 
 const enum MemoryPosition {
   // 总内存
