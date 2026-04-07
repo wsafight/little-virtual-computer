@@ -60,6 +60,12 @@ export default class SimulatorUI {
     return domUtils.$Canvas('#canvas');
   }
 
+  static showError(message: string) {
+    const el = domUtils.$('#debuggerMessageArea');
+    el.textContent = message;
+    setTimeout(() => { if (el.textContent === message) el.textContent = ''; }, 5000);
+  }
+
   static init(computer: Computer) {
     this.computer = computer
   }
@@ -262,13 +268,15 @@ export default class SimulatorUI {
     }
   }
 
-  static updateWorkingMemoryView() {
-    const buf = this.workingMemoryBuf;
-    for (let i = MemoryPosition.WORKING_MEMORY_START; i < MemoryPosition.WORKING_MEMORY_END; i++) {
-      buf[i - MemoryPosition.WORKING_MEMORY_START] =
-        `${this.markerForAddress(i)} ${i}: ${this.computer.getMemory(i)}`;
+  static fillMemoryBuf(buf: string[], start: number, end: number) {
+    for (let i = start; i < end; i++) {
+      buf[i - start] = `${this.markerForAddress(i)} ${i}: ${this.computer.getMemory(i)}`;
     }
-    domUtils.$TextArea('#workingMemoryView').textContent = buf.join('\n');
+  }
+
+  static updateWorkingMemoryView() {
+    this.fillMemoryBuf(this.workingMemoryBuf, MemoryPosition.WORKING_MEMORY_START, MemoryPosition.WORKING_MEMORY_END);
+    domUtils.$TextArea('#workingMemoryView').textContent = this.workingMemoryBuf.join('\n');
   }
 
   static scrollToProgramLine(item: number) {
@@ -398,11 +406,8 @@ ${this.formatMemoryLine(MemoryPosition.CURRENT_TIME_ADDRESS, 'current time')}`;
   }
 
   static updateVideoMemoryView() {
-    const buf = this.videoMemoryBuf;
-    for (let i = MemoryPosition.VIDEO_MEMORY_START; i < MemoryPosition.VIDEO_MEMORY_END; i++) {
-      buf[i - MemoryPosition.VIDEO_MEMORY_START] = `${this.markerForAddress(i)} ${i}: ${this.computer.getMemory(i)}`;
-    }
-    domUtils.$TextArea('#videoMemoryView').textContent = buf.join('\n');
+    this.fillMemoryBuf(this.videoMemoryBuf, MemoryPosition.VIDEO_MEMORY_START, MemoryPosition.VIDEO_MEMORY_END);
+    domUtils.$TextArea('#videoMemoryView').textContent = this.videoMemoryBuf.join('\n');
   }
 
   static updateAudioMemoryView() {

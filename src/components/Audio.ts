@@ -55,9 +55,19 @@ export default class Audio {
   }
 
   static updateAudio() {
+    if (!CPU.running) {
+      // CPU 停止时，只需静音所有通道
+      for (const channel of this.audioChannels) {
+        if (channel.state.gain !== 0) {
+          channel.gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
+          channel.state.gain = 0;
+        }
+      }
+      return;
+    }
     for (const channel of this.audioChannels) {
       const frequency = Math.max(20, Math.min(20000, (Memory.ram[channel.freqAddr] || 0) / 1000));
-      const gain = !CPU.running ? 0 : (Memory.ram[channel.volAddr] || 0) / 100 * this.MAX_GAIN;
+      const gain = (Memory.ram[channel.volAddr] || 0) / 100 * this.MAX_GAIN;
       const oscillatorType = WAVE_TYPE[Memory.ram[channel.waveTypeAddr]] || WAVE_TYPE['0'];
 
       const {state} = channel;

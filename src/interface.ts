@@ -20,13 +20,14 @@ export interface Computer {
   isRunning: () => boolean;
   isHalted: () => boolean;
   setRunning: (running: boolean) => void;
-  step: () => void;
+  step: (trace?: boolean) => void;
   getOpcodesToInstructions: () => Map<number, string>,
   getInstructions: () => CPUInstructions,
   getLastStepTrace: () => StepTrace,
   updateAudio: () => void;
   drawScreen: () => void;
   markVideoWrites: (addresses: number[]) => void;
+  markFullRedraw: () => void;
   parseProgramText: (code: string) => ProgramInstruction[];
   assembleAndLoadProgram: (ast: ProgramInstruction[]) => void;
 }

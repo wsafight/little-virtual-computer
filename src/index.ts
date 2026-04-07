@@ -29,7 +29,7 @@ export default function initComputer(): Computer {
     getProgramCounter: () => CPU.programCounter,
     resetCPU: () => CPU.reset(),
     setRunning: (running: boolean) => CPU.running = running,
-    step: () => CPU.step(),
+    step: (trace?: boolean) => CPU.step(trace),
 
     getOpcodesToInstructions: () => CPU.opcodesToInstructions,
     getInstructions: () => CPU.instructions,
@@ -39,6 +39,7 @@ export default function initComputer(): Computer {
     updateAudio: () => Audio.updateAudio(),
     drawScreen: () => Display.drawScreen(),
     markVideoWrites: (addresses: number[]) => Display.markVideoWrites(addresses),
+    markFullRedraw: () => { Display.fullRedrawNeeded = true; },
     parseProgramText: (code: string) => Assembler.parseProgramText(code),
     assembleAndLoadProgram: (program) => Assembler.assembleAndLoadProgram(program)
   }

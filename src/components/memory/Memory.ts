@@ -7,6 +7,7 @@ export default class Memory {
   static tracing: boolean = false
   static readTrace: Set<number> = new Set()
   static writeTrace: Set<number> = new Set()
+  static lastTrace: StepTrace = { reads: [], writes: [] }
 
   static beginTrace() {
     this.tracing = true;
@@ -15,10 +16,11 @@ export default class Memory {
   }
 
   static endTrace(): StepTrace {
-    const trace = {
-      reads: Array.from(this.readTrace),
-      writes: Array.from(this.writeTrace),
-    };
+    const trace = this.lastTrace;
+    trace.reads.length = 0;
+    for (const addr of this.readTrace) trace.reads.push(addr);
+    trace.writes.length = 0;
+    for (const addr of this.writeTrace) trace.writes.push(addr);
     this.tracing = false;
     this.readTrace.clear();
     this.writeTrace.clear();

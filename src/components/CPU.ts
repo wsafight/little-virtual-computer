@@ -29,8 +29,8 @@ export default class CPU {
     }
   }
 
-  static step() {
-    Memory.beginTrace();
+  static step(trace: boolean = true) {
+    if (trace) Memory.beginTrace();
     try {
       Input.updateInputs();
       const opcode = this.advanceProgramCounter();
@@ -40,19 +40,15 @@ export default class CPU {
         throw new Error(`Unknown opcode '${opcode}'`);
       }
 
-      // read as many values from memory as the instruction takes as operands and
-      // execute the instruction with those operands
-
       // 获取操作指令集
       const operands = this.instructions[instructionName].operands.map(() =>
-        // 继续获取
         this.advanceProgramCounter()
       );
 
       // 执行命令
       this.instructions[instructionName].execute.apply(null, operands);
     } finally {
-      this.lastStepTrace = Memory.endTrace();
+      if (trace) this.lastStepTrace = Memory.endTrace();
     }
   }
 

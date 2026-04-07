@@ -4,7 +4,7 @@ import MemoryPosition from "../components/memory/MemoryPosition";
 
 export default class Simulation {
   static readonly BREAKPOINTS_STORAGE_KEY = 'simulationBreakpoints'
-  static CYCLES_PER_YIELD: number = 997
+  static readonly FRAME_BUDGET_MS: number = 14
   static delayBetweenCycles: number = 0
   static computer: Computer
   static breakpoints: Set<number> = new Set()
@@ -50,17 +50,19 @@ export default class Simulation {
   }
 
   static stepComputer(forceTrace: boolean = false) {
-    this.computer.step();
-    const trace = this.computer.getLastStepTrace();
-    this.computer.markVideoWrites(trace.writes);
-    if (forceTrace || this.delayBetweenCycles !== 0) {
+    const needTrace = forceTrace || this.delayBetweenCycles !== 0;
+    this.computer.step(needTrace);
+    if (needTrace) {
+      const trace = this.computer.getLastStepTrace();
+      this.computer.markVideoWrites(trace.writes);
       SimulatorUI.setExecutionTrace(trace);
     }
   }
 
   static loop() {
     if (Simulation.delayBetweenCycles === 0) {
-      for (let i = 0; i < Simulation.CYCLES_PER_YIELD; i++) {
+      const deadline = performance.now() + Simulation.FRAME_BUDGET_MS;
+      while (performance.now() < deadline) {
         if (!this.computer.isRunning()) {
           Simulation.stop();
           break;
@@ -72,6 +74,7 @@ export default class Simulation {
         }
         this.stepComputer();
       }
+      this.computer.markFullRedraw();
     } else {
       if (this.breakpoints.has(this.computer.getProgramCounter())) {
         Simulation.stop();
@@ -125,7 +128,7 @@ export default class Simulation {
     try {
       this.computer.assembleAndLoadProgram(this.computer.parseProgramText(programText));
     } catch (err) {
-      alert(err instanceof Error ? err.message : String(err));
+      SimulatorUI.showError(err instanceof Error ? err.message : String(err));
     }
 
     SimulatorUI.setLoadedProgramText(programText);
